@@ -14,24 +14,20 @@ void Record::set_coordinate(double x, double y) {
     this->y_coordinate = y;
 }
 
-void Record::set_category(double category) {
+void Record::set_category(long long category) {
     this->category = category;
 }
 
-void Record::set_group(double group) {
+void Record::set_group(long long group) {
     this->group = group;
 }
 
 
 std::string Record::toString() {
-
     std::string output;
-
-
     output += "X-Coordinate: " + std::to_string(x_coordinate) + " Y-Coordinate: " + std::to_string(y_coordinate);
     output += ", Category: " + std::to_string(category);
     output += ", Group: " + std::to_string(group);
-
     return output;
 
 }

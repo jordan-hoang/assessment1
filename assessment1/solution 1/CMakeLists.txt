@@ -19,9 +19,9 @@ else()
 endif()
 
 
-add_executable(assessment main.cpp
-        record.cpp
-        record.h)
+add_executable(assessment "main.cpp"
+        Record.cpp
+        Record.h)
 
 # Include Boost headers (ensure IDE sees them)
 target_include_directories(assessment
@@ -38,6 +38,7 @@ target_link_libraries(assessment
 target_link_libraries(assessment PRIVATE libpqxx::pqxx)
 
 # Copy it over.
-configure_file(${CMAKE_SOURCE_DIR}/assessment1/schema.pgsql
+configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/../schema.pgsql
         ${CMAKE_BINARY_DIR}/assessment1/schema.pgsql
         COPYONLY)

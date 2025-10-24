@@ -1,7 +1,6 @@
 #include <fstream>
 #include <iostream>
-#include <algorithm>
-#include <iomanip>
+#include <cstdint>
 
 #include <pqxx/pqxx>
 #include <boost/program_options.hpp>
@@ -12,9 +11,10 @@
 namespace po = boost::program_options;
 
 /**
- * @param fileName Should go to the parent so it should be <somepath>/assessment1/data/0"
+ * @param filePath Should go to the parent so it should be <somepath>/assessment1/data/0"
  * it will then search inside and look for these 3 files:
  * categories.txt, groups.txt and points.txt should be inside.
+ * @param isGood - True if everything was good false if something went wrong.
  */
 std::vector<Record> parseFile(std::string filePath, bool &isGood) {
 
@@ -40,13 +40,35 @@ std::vector<Record> parseFile(std::string filePath, bool &isGood) {
     }
 
     std::vector<Record> list_records;
-    double x, y, group, category;
     // Read files line by line
-    while (files[0] >> x >> y && files[1] >> group && files[2] >> category) {
-        Record r(x, y);
-        r.set_group(group);
-        r.set_category(category);
-        list_records.push_back(r);
+    std::string line_points, line_groups, line_categories; // Variables to hold lines as strings
+    // 1. Use std::getline to read the ENTIRE line of each file as a string
+    while (std::getline(files[0], line_points) &&
+           std::getline(files[1], line_groups) &&
+           std::getline(files[2], line_categories)) {
+        try {
+            std::stringstream ss_points(line_points);
+            double x, y;
+            ss_points >> x >> y;
+
+            double group_double = std::stod(line_groups);
+            std::int64_t group_id = static_cast<std::int64_t>(group_double);
+
+            double category_double = std::stod(line_categories);
+            std::int64_t category_id = static_cast<std::int64_t>(category_double);
+
+            list_records.emplace_back(x, y, category_id, group_id);
+
+        } catch (const std::exception& e) {
+            isGood = false;
+            return {};
+        }
+    }
+
+    for (auto& file : files) {
+        if (file.is_open()) {
+            file.close();
+        }
     }
 
     return list_records;
@@ -130,16 +152,17 @@ int writeToDB(const std::vector<Record>& records) {
         std::cout << "Connected to database " << C.dbname() << " successfully!" << std::endl;
 
         pqxx::work W(C);
-        std::set<long long> unique_groups;
+        std::set<std::int64_t> unique_groups;
         for (const auto& record : records) {
-            unique_groups.insert(record.get_group());
+            auto group_id = static_cast<std::int64_t>(record.get_group());
+            std::cout << group_id << std::endl; // DEBUG!!!
+            unique_groups.insert(group_id);
         }
 
-        // Insertion_group table insert.
-        for (long long group_id : unique_groups) {
+        for (std::int64_t group_id : unique_groups) {
             W.exec_params(
                 "INSERT INTO inspection_group (id) VALUES ($1) ON CONFLICT (id) DO NOTHING",
-                group_id
+                pqxx::to_string(group_id)
             );
         }
 
@@ -153,20 +176,20 @@ int writeToDB(const std::vector<Record>& records) {
              coord_y  | double precision |           |          |
              category | integer          |           |          |
          */
-        long long region_id_counter = get_next_available_id(C, "inspection_region");
-        for (const auto& record : records) {
-            W.exec_params(
-                "INSERT INTO inspection_region (id, group_id, coord_x, coord_y, category) "
-                "VALUES ($1, $2, $3, $4, $5)",
-                region_id_counter++,
-                record.get_group(),
-                record.get_x_coordinate(),
-                record.get_y_coordinate(),
-                record.get_category()
-            );
-        }
+         long long region_id_counter = get_next_available_id(C, "inspection_region");
+         for (const auto& record : records) {
+             W.exec_params(
+                 "INSERT INTO inspection_region (id, group_id, coord_x, coord_y, category) "
+                 "VALUES ($1, $2, $3, $4, $5)",
+                 region_id_counter++,
+                 record.get_group(),
+                 record.get_x_coordinate(),
+                 record.get_y_coordinate(),
+                 record.get_category()
+             );
+         }
+         W.commit();
 
-        W.commit();
     }
     catch (const std::exception &e) {
         // 6. Handle errors
@@ -180,7 +203,6 @@ int writeToDB(const std::vector<Record>& records) {
 
 int main(int argc, char* argv[])
 {
-
     po::options_description desc("Allowed options");
     desc.add_options()
         ("help,h", "Show help message")
@@ -196,26 +218,23 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    // 3. Handle options
     if (vm.count("help")) {
         std::cout << desc << std::endl;
         return 1;
     }
 
+    // Handle the main parse.
     if (vm.count("data_directory")) {
         std::string path = vm["data_directory"].as<std::string>();
         std::cout << "path entered: " << path << std::endl;
 
         bool isGood = true;
         std::vector<Record> myRecord = parseFile(path, isGood);
-
         if(!isGood) {
             std::cerr << "Could not parse files inside of: " << path << std::endl;
             return -1;
         }
-
         writeToDB(myRecord);
-
     }
     else {
         std::cout << "No arguments entered" << std::endl;
