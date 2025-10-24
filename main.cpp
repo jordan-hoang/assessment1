@@ -12,15 +12,13 @@
 namespace po = boost::program_options;
 
 /**
- *
- * @param fileName Should go to the parent so it should be ...../assessment1/data/0"
+ * @param fileName Should go to the parent so it should be <somepath>/assessment1/data/0"
+ * it will then search inside and look for these 3 files:
  * categories.txt, groups.txt and points.txt should be inside.
  */
-std::vector<Record> parseFile(std::string filePath) {
+std::vector<Record> parseFile(std::string filePath, bool &isGood) {
 
-    filePath = "C:/Users/jorda/CLionProjects/assessment/assessment1/data/0"; // For faster testing, REMOVE when done.
     std::cout << "using path of : " << filePath << std::endl;
-
     if (!filePath.empty() && filePath.back() != '/') {
         filePath += '/';
     }
@@ -34,10 +32,14 @@ std::vector<Record> parseFile(std::string filePath) {
     std::vector<std::ifstream> files;
     for (const auto& f : fileNames) {
         files.emplace_back(f);
+        if (!files.back().is_open()) {
+            isGood = false;
+            return {}; // Invalid file, set false and return empty vector.
+        }
+
     }
 
     std::vector<Record> list_records;
-
     double x, y, group, category;
     // Read files line by line
     while (files[0] >> x >> y && files[1] >> group && files[2] >> category) {
@@ -51,7 +53,7 @@ std::vector<Record> parseFile(std::string filePath) {
 
 }
 
-// Function to find the maximum ID and return the next available ID
+// Function to find the maximum ID and return the next available ID, not sure if needed....
 long long get_next_available_id(pqxx::connection& C, const std::string& table_name) {
     try {
         pqxx::nontransaction N(C);
@@ -59,20 +61,53 @@ long long get_next_available_id(pqxx::connection& C, const std::string& table_na
         pqxx::result R = N.exec(query);
 
         if (R[0][0].is_null()) {
-            // If the table is empty, MAX(id) returns NULL. Start counter at 0.
             return 0;
         } else {
-            // Table has data. Get the max value and increment by 1.
             long long max_id = R[0][0].as<long long>();
             return max_id + 1;
         }
     } catch (const pqxx::sql_error& e) {
         // Handle case where table might not exist yet (though we assume it does).
         std::cerr << "SQL Error finding max ID for " << table_name << ": " << e.what() << std::endl;
-        throw; // Re-throw to halt execution if a critical error occurs
+        throw;
     }
 
 }
+
+
+// Creates the tables
+// If you manually created the tables then you can just comment this out.
+int createDB(const std::string& connection_string) {
+
+    try {
+        // 2. Establish the connection
+        pqxx::connection C(connection_string);
+        pqxx::work W(C);
+
+        // 2️⃣ Read the schema file into a string
+        std::ifstream file("assessment1/schema.pgsql");
+
+        if (!file.is_open()) {
+            std::cerr << "Could not open schema.pgsql\n";
+            return 1;
+        }
+
+        std::stringstream buffer;
+        buffer << file.rdbuf();
+        std::string sql = buffer.str();
+
+        W.exec(sql);
+        W.commit();
+    }
+    catch (const std::exception &e) {
+        // 6. Handle errors
+        std::cerr << "Database connection or query failed: " << e.what() << std::endl;
+        return -1;
+    }
+
+    return 0;
+}
+
 
 // Writes to the database using lib.
 int writeToDB(const std::vector<Record>& records) {
@@ -83,6 +118,11 @@ int writeToDB(const std::vector<Record>& records) {
             "user=postgres "
             "password=Moonshine4me " /// REPLACE WITH YOUR PASSWORD!!!
             "dbname=postgres ";      /// Generic default database.
+
+    if(createDB(connection_string)) {
+        std::cerr << "Creating database failed. Check connection string, and path of schema.pgsql. If you manually created and don't wanna deal with path issues you can just comment this out." << std::endl;
+        return -1;
+    }
 
     try {
         // 2. Establish the connection
@@ -105,16 +145,13 @@ int writeToDB(const std::vector<Record>& records) {
 
         W.commit();
 
-        // Now we need to do inspection_region.
-        /**
+        /** Now we need to do inspection_region.
          *
             *id       | bigint           |           | not null |
              group_id | bigint           |           |          |
              coord_x  | double precision |           |          |
              coord_y  | double precision |           |          |
              category | integer          |           |          |
-         *
-         *
          */
         long long region_id_counter = get_next_available_id(C, "inspection_region");
         for (const auto& record : records) {
@@ -136,8 +173,6 @@ int writeToDB(const std::vector<Record>& records) {
         std::cerr << "Database connection or query failed: " << e.what() << std::endl;
         return -1;
     }
-
-
     return 0;
 }
 
@@ -146,12 +181,6 @@ int writeToDB(const std::vector<Record>& records) {
 int main(int argc, char* argv[])
 {
 
-    std::vector<Record> myRecord = parseFile("asdf");
-    writeToDB(myRecord);
-
-
-
-    /*
     po::options_description desc("Allowed options");
     desc.add_options()
         ("help,h", "Show help message")
@@ -177,13 +206,20 @@ int main(int argc, char* argv[])
         std::string path = vm["data_directory"].as<std::string>();
         std::cout << "path entered: " << path << std::endl;
 
-        parseFile(path);
+        bool isGood = true;
+        std::vector<Record> myRecord = parseFile(path, isGood);
+
+        if(!isGood) {
+            std::cerr << "Could not parse files inside of: " << path << std::endl;
+            return -1;
+        }
+
+        writeToDB(myRecord);
 
     }
     else {
         std::cout << "No arguments entered" << std::endl;
     }
-    */
 
     return 0;
 }

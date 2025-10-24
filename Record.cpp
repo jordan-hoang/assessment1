@@ -8,7 +8,7 @@
 #include <string>
 
 
-// Maybe not necessary we could've done a struct and just make everything public but I already wrote this oh well.
+// Maybe not necessary we could've done a struct and not use getters/setters.
 void Record::set_coordinate(double x, double y) {
     this->x_coordinate = x;
     this->y_coordinate = y;

@@ -26,14 +26,10 @@ public:
     void set_category(double category);
     void set_group(double group);
 
-
     double get_group() const{return this->group;}
     double get_category() const{return this->category;};
     double get_x_coordinate() const{return this->x_coordinate;};
     double get_y_coordinate() const{return this->y_coordinate;};
-
-
-
 
     ~Record() = default;
 };

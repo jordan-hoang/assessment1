@@ -37,8 +37,7 @@ target_link_libraries(assessment
 
 target_link_libraries(assessment PRIVATE libpqxx::pqxx)
 
-
-# Optional: print debug info
-message(STATUS "Boost version: ${Boost_VERSION}")
-message(STATUS "Boost include dirs: ${Boost_INCLUDE_DIRS}")
-message(STATUS "Boost libraries: ${Boost_LIBRARIES}")
+# Copy it over.
+configure_file(${CMAKE_SOURCE_DIR}/assessment1/schema.pgsql
+        ${CMAKE_BINARY_DIR}/assessment1/schema.pgsql
+        COPYONLY)
