@@ -21,7 +21,9 @@ else()
 endif()
 
 
-add_executable(assessment main.cpp)
+add_executable(assessment main.cpp
+        record.cpp
+        record.h)
 
 # Include Boost headers (ensure IDE sees them)
 target_include_directories(assessment

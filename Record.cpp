@@ -1,0 +1,39 @@
+//
+// Created by jorda on 10/23/2025.
+//
+
+#include "Record.h"
+
+#include <iostream>
+#include <string>
+
+
+// Maybe not necessary we could've done a struct and just make everything public but I already wrote this oh well.
+void Record::set_coordinate(double x, double y) {
+    this->x_coordinate = x;
+    this->y_coordinate = y;
+}
+
+void Record::set_category(double category) {
+    this->category = category;
+}
+
+void Record::set_group(double group) {
+    this->group = group;
+}
+
+
+std::string Record::toString() {
+
+    std::string output;
+
+
+    output += "X-Coordinate: " + std::to_string(x_coordinate) + " Y-Coordinate: " + std::to_string(y_coordinate);
+    output += ", Category: " + std::to_string(category);
+    output += ", Group: " + std::to_string(group);
+
+    return output;
+
+}
+
+
