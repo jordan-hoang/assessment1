@@ -8,7 +8,7 @@ find_package(Boost COMPONENTS program_options)
 find_package(libpqxx CONFIG REQUIRED)
 
 if (Boost_FOUND)
-    message(STATUS "✅ Found Boost automatically at: ${Boost_INCLUDE_DIRS}")
+    message(STATUS "Found Boost at: ${Boost_INCLUDE_DIRS}")
 else()
     message(WARNING "⚠️ Boost not found automatically, using C:/Boost....")
     set(BOOST_ROOT "C:/Boost/boost_1_87_0")
