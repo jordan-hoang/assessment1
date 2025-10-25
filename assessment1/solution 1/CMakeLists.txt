@@ -17,7 +17,7 @@ target_link_libraries(solution1
         PRIVATE
         ${Boost_LIBRARIES}
         libpqxx::pqxx
-        RecordCore
+        InspectionGroup
 )
 
 # Copy it over schema files to read from for cmakebuild_debug.
@@ -27,8 +27,8 @@ configure_file(
         COPYONLY)
 
 ### Add Record header and cpp file to it.
-set(RECORD_BIN_DIR "${CMAKE_CURRENT_BINARY_DIR}/record_core_lib")
+set(RECORD_BIN_DIR "${CMAKE_CURRENT_BINARY_DIR}/InspectionGroup")
 add_subdirectory(
-        "../RecordCore"
+        "../include/InspectionGroup"
         ${CMAKE_CURRENT_BINARY_DIR}/record_core_lib
 )

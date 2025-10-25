@@ -150,12 +150,16 @@ int writeToDB(const std::vector<Record>& records) {
         // 2. Establish the connection
         pqxx::connection C(connection_string);
         std::cout << "Connected to database " << C.dbname() << " successfully!" << std::endl;
-
         pqxx::work W(C);
+
+        ///// Clear any prexisting values in database tables first, just for faster debugging.
+        W.exec_params("TRUNCATE TABLE inspection_group;");
+        W.exec_params("TRUNCATE TABLE inspection_region;");
+        W.commit();
+
         std::set<std::int64_t> unique_groups;
         for (const auto& record : records) {
             auto group_id = static_cast<std::int64_t>(record.get_group());
-            std::cout << group_id << std::endl; // DEBUG!!!
             unique_groups.insert(group_id);
         }
 

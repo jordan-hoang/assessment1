@@ -29,6 +29,17 @@ struct Point {
 struct Region {
     Point p_min;
     Point p_max;
+    // Checks if a given point is inside the region.
+    bool contains(int px, int py) const {
+        return (px < p_max.x &&
+                px > p_min.x &&
+                py < p_max.y &&
+                py > p_min.y);
+    }
+
+
+
+
 };
 
 // --- Level 2: operator_crop Parameters ---

@@ -6,8 +6,8 @@
 #define RECORD_H
 #include <string>
 
-// Basic container class that handles data
-class Record {
+// Basic container class that handles data, from InspectionGroup database
+class InspectionGroup {
 private:
     double x_coordinate;
     double y_coordinate;
@@ -17,7 +17,7 @@ private:
 
 public:
 
-    explicit Record(double x_ = 0, double y_ = 0, std::int64_t category_ = 0, std::int64_t group_ = 0)
+    explicit InspectionGroup(double x_ = 0, double y_ = 0, std::int64_t category_ = 0, std::int64_t group_ = 0)
         : x_coordinate(x_), y_coordinate(y_), category_id(category_), group_id(group_) {}
 
     std::string toString();
@@ -30,7 +30,7 @@ public:
     double get_x_coordinate() const{return this->x_coordinate;};
     double get_y_coordinate() const{return this->y_coordinate;};
 
-    ~Record() = default;
+    ~InspectionGroup() = default;
 };
 
 
