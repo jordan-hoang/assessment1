@@ -181,19 +181,19 @@ int writeToDB(const std::vector<InspectionGroup>& records) {
              category | integer          |           |          |
          */
          long long region_id_counter = get_next_available_id(C, "inspection_region");
-         for (const auto& record : records) {
-             W.exec_params(
-                 "INSERT INTO inspection_region (id, group_id, coord_x, coord_y, category) "
-                 "VALUES ($1, $2, $3, $4, $5)",
-                 region_id_counter++,
-                 record.get_group_id(),
-                 record.get_x_coordinate(),
-                 record.get_y_coordinate(),
-                 record.get_category()
-             );
-         }
-         W.commit();
-
+        for (const auto& record : records) {
+            W.exec_params(
+                "INSERT INTO inspection_region (id, group_id, coord_x, coord_y, category) "
+                "VALUES ($1, $2, $3, $4, $5)",
+                region_id_counter++,
+                record.get_group_id(),
+                record.get_x_coordinate(),
+                record.get_y_coordinate(),
+                record.get_category()
+            );
+        }
+        W.commit();
+        std::cout << "Finishing writing to database" << std::endl;
     }
     catch (const std::exception &e) {
         // 6. Handle errors
