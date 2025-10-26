@@ -1,18 +1,45 @@
+//
+// Created by jordan on 10/26/2025.
+//
+
+
 #include <fstream>
 #include <iostream>
-#include <cstdint>
-#include <boost/program_options.hpp>
 #include <pqxx/pqxx>
+#include <boost/program_options.hpp>
 
-
+#include "InspectionGroupFilter.h"
 #include "QueryFileStructure.h"
+#include "ResultWriter.h"
 #include "json.hpp"
-#include "InspectionGroup.h"
-#include "../include/InspectionGroupFilter/InspectionGroupFilter.h"
-#include "../include/Writers/ResultWriter.h"
+
 
 using json = nlohmann::json;
 namespace po = boost::program_options;
+
+
+/**
+ * Reads a JSON file from path and returns the parsed object.
+ * @param queryFilePath The path to the JSON file.
+ * @return The parsed json object, or an empty object on failure.
+ */
+json readJsonFile(const std::string& queryFilePath) {
+    std::ifstream i(queryFilePath);
+    if (!i.is_open()) {
+        std::cerr << "Error: Could not open query file: " << queryFilePath << std::endl;
+        return {};
+    }
+
+    try {
+        json j = json::parse(i);
+        return j;
+    } catch (const json::exception& e) {
+        std::cerr << "JSON Parsing Error: " << e.what() << std::endl;
+        return {}; // Return an empty JSON object on parsing error
+    }
+
+}
+
 
 /**
  * Extracts all necessary query parameters from a parsed JSON object
@@ -88,64 +115,6 @@ QueryFileStructure extractQueryData(const json& my_json) {
 
 
 /**
- * Reads a JSON file from path and returns the parsed object.
- * @param queryFilePath The path to the JSON file.
- * @return The parsed json object, or an empty object on failure.
- */
-json readJsonFile(const std::string& queryFilePath) {
-    std::ifstream i(queryFilePath);
-    if (!i.is_open()) {
-        std::cerr << "Error: Could not open query file: " << queryFilePath << std::endl;
-        return {};
-    }
-
-    try {
-        json j = json::parse(i);
-        return j;
-    } catch (const json::exception& e) {
-        std::cerr << "JSON Parsing Error: " << e.what() << std::endl;
-        return {}; // Return an empty JSON object on parsing error
-    }
-
-}
-
-
-
-
-
-/**
- *
- * @param query_struct - The query struct you are going to filter list_records by.
- * @param list_records - List of records.
- * @return A filtered list of list_records.
- */
-std::vector<InspectionGroup> filterWithQueryStruct(const QueryFileStructure &query_struct, const std::vector<InspectionGroup> &list_records) {
-
-    /* For debugging */
-    QueryFileStructure::dumpQueryStruct(query_struct); // For debugging can remove later... not needed
-
-    std::cout << std::endl;
-    std::cout << std::endl;
-    for(InspectionGroup a : list_records) {
-        std::cout << a.toString() << std::endl;
-    }
-
-
-    std::vector<InspectionGroup> filtered_records = InspectionGroupFilter::applyFilter(query_struct, list_records);
-
-    // More debugging dumps
-    std::cout << "\n\nDumping out filtered records" << std::endl;
-    for(InspectionGroup a : filtered_records) {
-        std::cout << a.toString() << std::endl;
-    }
-
-    return filtered_records;
-
-}
-
-
-
-/**
  * @param row A pqxx::row object containing the fetched data, and turning it to a record.
  * @return A fully populated Record object.
  */
@@ -158,6 +127,7 @@ InspectionGroup map_row_to_record(const pqxx::row& row) {
 
     return InspectionGroup(x, y, category_val, group_val);
 }
+
 
 /**
  *
@@ -186,13 +156,49 @@ std::vector<InspectionGroup> readRecordsFromDB() {
 }
 
 
-void executeQuery(const std::string &path_to_json) {
-        json parsed_json = readJsonFile(path_to_json);
-        QueryFileStructure query_struct = extractQueryData(parsed_json); // Extract the json into that class we created to filter against.
-        std::vector<InspectionGroup> list_records = readRecordsFromDB(); // Fetch all the database results.
-        std::vector<InspectionGroup> filtered_records = filterWithQueryStruct(query_struct, list_records); // Now filter list_records
-        ResultWriter::writeToTextFile(filtered_records);
+
+/**
+ *
+ * @param query_struct - The query struct you are going to filter list_records by.
+ * @param list_records - List of records.
+ * @return A filtered list of list_records.
+ */
+std::vector<InspectionGroup> filterWithQueryStruct(const QueryFileStructure &query_struct, const std::vector<InspectionGroup> &list_records) {
+
+    /* For debugging */
+    QueryFileStructure::dumpQueryStruct(query_struct); // For debugging can remove later... not needed
+    std::cout << std::endl;
+    std::cout << std::endl;
+    for(InspectionGroup a : list_records) {
+        std::cout << a.toString() << std::endl;
+    }
+
+
+    std::vector<InspectionGroup> filtered_records = InspectionGroupFilter::applyFilter(query_struct, list_records);
+
+    // More debugging dumps
+    std::cout << "\n\nDumping out filtered records" << std::endl;
+    for(InspectionGroup a : filtered_records) {
+        std::cout << a.toString() << std::endl;
+    }
+
+    return filtered_records;
+
 }
+
+
+
+
+
+void executeQuery(const std::string &path_to_json) {
+    json parsed_json = readJsonFile(path_to_json);
+    QueryFileStructure query_struct = extractQueryData(parsed_json); // Extract the json into that class we created to filter against.
+    std::vector<InspectionGroup> list_records = readRecordsFromDB(); // Fetch all the database results.
+    std::vector<InspectionGroup> filtered_records = filterWithQueryStruct(query_struct, list_records); // Now filter list_records
+    ResultWriter::writeToTextFile(filtered_records);
+}
+
+
 
 
 int main(int argc, char* argv[])

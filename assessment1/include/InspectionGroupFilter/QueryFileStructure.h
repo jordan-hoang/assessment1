@@ -12,6 +12,8 @@
 #include <set>
 #include <optional>
 #include <cstdint>
+#include <iostream>
+#include <ostream>
 
 #include "InspectionGroup.h"
 
@@ -71,6 +73,52 @@ struct QueryFileStructure {
     Region valid_region;
     // REQUIRED: The parameters for the specific 'operator_crop' query.
     CropQueryParameters operator_crop;
+
+
+
+    /**
+     * Dumps out the values for query for debugging... maybe move this into the struct class or something.
+     * @param query
+     */
+    static void dumpQueryStruct(const QueryFileStructure &query) {
+
+        std::cout << "Valid_Region Min x,y: " << query.valid_region.p_min.x << " " << query.valid_region.p_min.y << std::endl;
+        std::cout << "Valid_Region Max x,y: " << query.valid_region.p_max.x << " " << query.valid_region.p_max.y << std::endl;
+
+        std::cout << "Valid_Region_operator_crop Min x,y: " << query.operator_crop.region.p_min.x << " " << query.valid_region.p_min.y << std::endl;
+        std::cout << "Valid_Region_operator_crop Max x,y: " << query.operator_crop.region.p_max.x << " " << query.valid_region.p_max.y << std::endl;
+
+
+        if(query.operator_crop.category.has_value()) {
+            std::cout << "Category: " << query.operator_crop.category.value() << std::endl;
+        } else {
+            std::cout << "Category has no value (optional)" << std::endl;
+        }
+
+        if(query.operator_crop.one_of_groups.has_value()) {
+            const auto& groups_set = query.operator_crop.one_of_groups.value();
+            std::cout << "One of Groups: {";
+            bool first = true;
+            for (std::int64_t group_id : groups_set) {
+                if (!first) {
+                    std::cout << ", ";
+                }
+                std::cout << group_id;
+                first = false;
+            }
+            std::cout << "}" << std::endl;
+        } else {
+            std::cout << "OneOf groups has no value assigned (optional)" << std::endl;
+        }
+
+        if(query.operator_crop.proper.has_value()) {
+            std::cout << "Proper: " << query.operator_crop.proper.value() << std::endl;
+        } else {
+            std::cout << "Proper has no value assigned (optional), so we assume false!" << std::endl;
+        }
+
+    }
+
 };
 
 

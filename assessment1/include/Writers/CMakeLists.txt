@@ -1,4 +1,4 @@
-# record_lib/CMakeLists.txt
+# Result writer, its just a contains a bunch of utiilty functions
 project(ResultWriter)
 set(CMAKE_CXX_STANDARD 17)
 

@@ -1,4 +1,4 @@
-# record_lib/CMakeLists.txt
+
 project(InspectionGroup)
 set(CMAKE_CXX_STANDARD 17)
 
