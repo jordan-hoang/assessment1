@@ -19,6 +19,7 @@ target_link_libraries(solution2
             libpqxx::pqxx
             InspectionGroup
             InspectionGroupFilter
+            ResultWriter
 )
 
 ### Add Record header and cpp file to it.
@@ -29,9 +30,18 @@ add_subdirectory(
         ${INSPECTION_GROUP_BIN_DIR} # 2nd argument: Binary path
 )
 
+## Add Inspection Group Filter
 set(INSPECTION_FILTER_SRC_DIR "../include/InspectionGroupFilter")
 set(INSPECTION_FILTER_BIN_DIR "${CMAKE_CURRENT_BINARY_DIR}/InspectionGroupFilter")
 add_subdirectory(
         ${INSPECTION_FILTER_SRC_DIR}
         ${INSPECTION_FILTER_BIN_DIR}
 )
+
+## Add ResultWriter...
+set(RESULT_WRITER_SRC_DIR "")
+set(RESULT_WRITER_BIN_DIR "${CMAKE_CURRENT_BINARY_DIR}/Writers")
+add_subdirectory(
+        "../include/Writers"
+        "${CMAKE_CURRENT_BINARY_DIR}/Writers"
+) #### Normally you can just do add_subdirectory(../include/writers) if it was nested deeper but you can't so you need to specify a binpath as well.

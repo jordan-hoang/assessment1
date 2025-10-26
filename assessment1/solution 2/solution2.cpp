@@ -10,12 +10,10 @@
 #include "json.hpp"
 #include "InspectionGroup.h"
 #include "../include/InspectionGroupFilter/InspectionGroupFilter.h"
-
+#include "../include/Writers/ResultWriter.h"
 
 using json = nlohmann::json;
 namespace po = boost::program_options;
-
-
 
 /**
  * Extracts all necessary query parameters from a parsed JSON object
@@ -33,7 +31,6 @@ QueryFileStructure extractQueryData(const json& my_json) {
     QueryFileStructure query_data;
     try {
         // --- REQUIRED FIELD EXTRACTION ---
-
         // 1. Extract Valid Region (required)
         const json& vr_json = my_json.at("valid_region");
         query_data.valid_region.p_min.x = vr_json.at("p_min").at("x").get<double>();
@@ -63,7 +60,7 @@ QueryFileStructure extractQueryData(const json& my_json) {
             query_data.operator_crop.proper.emplace(oc_json.at("proper").get<bool>());
         }
 
-        // 5. one_of_groups (Optional array of std::int64_t) -> Converts to std::set
+        // 5. one_of_groups (Optional array of std::int64_t) -> Converts to std::set also must be [] if just single element. I guess you can add support for single number if  you wanted.
         if (oc_json.contains("one_of_groups")) {
             const json& groups_array = oc_json.at("one_of_groups");
 
@@ -100,7 +97,7 @@ json readJsonFile(const std::string& queryFilePath) {
     std::ifstream i(queryFilePath);
     if (!i.is_open()) {
         std::cerr << "Error: Could not open query file: " << queryFilePath << std::endl;
-        return json();
+        return {};
     }
 
     try {
@@ -166,11 +163,10 @@ void dumpQueryStruct(const QueryFileStructure &query) {
  */
 std::vector<InspectionGroup> filterWithQueryStruct(const QueryFileStructure &query_struct, const std::vector<InspectionGroup> &list_records) {
 
+    /* For debugging */
     dumpQueryStruct(query_struct); // For debugging can remove later... not needed
     std::cout << std::endl;
     std::cout << std::endl;
-
-    // Debugging
     for(InspectionGroup a : list_records) {
         std::cout << a.toString() << std::endl;
     }
@@ -178,7 +174,7 @@ std::vector<InspectionGroup> filterWithQueryStruct(const QueryFileStructure &que
 
     std::vector<InspectionGroup> filtered_records = InspectionGroupFilter::applyFilter(query_struct, list_records);
 
-    // More debugging
+    // More debugging dumps
     std::cout << "\n\nDumping out filtered records" << std::endl;
     for(InspectionGroup a : filtered_records) {
         std::cout << a.toString() << std::endl;
@@ -231,49 +227,54 @@ std::vector<InspectionGroup> readRecordsFromDB() {
 }
 
 
+void executeQuery(const std::string &path_to_json) {
+        json parsed_json = readJsonFile(path_to_json);
+        QueryFileStructure query_struct = extractQueryData(parsed_json); // Extract the json into that class we created to filter against.
+        std::vector<InspectionGroup> list_records = readRecordsFromDB(); // Fetch all the database results.
+        std::vector<InspectionGroup> filtered_records = filterWithQueryStruct(query_struct, list_records); // Now filter list_records
+        ResultWriter::writeToTextFile(filtered_records);
+}
+
+
 int main(int argc, char* argv[])
 {
     po::options_description desc("Allowed options");
     desc.add_options()
         ("help,h", "Show help message")
         ("query,q", po::value<std::string>(), "Path to json you want to parse")
+        ("test,t", "Hardcoded path used for fast testing.")
     ;
 
-//    std::string hardCodedFileName = "C:/Users/jorda/CLionProjects/assessment/assessment1/data/q1.json";
-    std::string hardCodedFileName = "C:/Users/jorda/CLionProjects/assessment/assessment1/data/testjson/sample_json_1.json";
+    //  std::string hardCodedFileName = "C:/Users/jorda/CLionProjects/assessment/assessment1/data/q1.json";
+    // std::string hardCodedFileName = "C:/Users/jorda/CLionProjects/assessment/assessment1/data/testjson/sample_json_1.json";
 
+    po::variables_map vm;
+    try {
+        po::store(po::parse_command_line(argc, argv, desc), vm);
+        po::notify(vm);
+    } catch (const po::error& e) {
+        std::cerr << e.what() << std::endl;
+        return 1;
+    }
 
-    json parsed_json = readJsonFile(hardCodedFileName);
+    if (vm.count("help")) {
+        std::cout << desc << std::endl;
+        return 1;
+    }
 
-    QueryFileStructure query_struct = extractQueryData(parsed_json); // Extract the json into that class we created to filter against.
-    std::vector<InspectionGroup> list_records = readRecordsFromDB(); // Fetch all the database results.
+    // Handle the main parse.
+    if (vm.count("query")) {
+        std::string path = vm["query"].as<std::string>();
+        executeQuery(path);
 
-    filterWithQueryStruct(query_struct, list_records); // Now filter list_records
+    } else if (vm.count("test")) {
+        std::string hardCodedFileName = "C:/Users/jorda/CLionProjects/assessment/assessment1/data/testjson/sample_json_1.json";
+        executeQuery(hardCodedFileName);
+    }
 
-
-   //filterJSON(query_struct);
-
-    // po::variables_map vm;
-    // try {
-    //     po::store(po::parse_command_line(argc, argv, desc), vm);
-    //     po::notify(vm);
-    // } catch (const po::error& e) {
-    //     std::cerr << e.what() << std::endl;
-    //     return 1;
-    // }
-    //
-    // if (vm.count("help")) {
-    //     std::cout << desc << std::endl;
-    //     return 1;
-    // }
-    //
-    // // Handle the main parse.
-    // if (vm.count("query")) {
-    //     std::string path = vm["query"].as<std::string>();
-    //     std::cout << "path entered: " << path << std::endl;
-    // } else {
-    //     std::cout << "No arguments entered" << std::endl;
-    // }
+    else {
+        std::cout << "No arguments entered" << std::endl;
+    }
 
     return 0;
 }
