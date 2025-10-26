@@ -6,7 +6,7 @@
 
 
 
-#include "FilterStruct.h"
+#include "QueryFileStructure.h"
 #include "json.hpp"
 #include "InspectionGroup.h"
 #include "../include/InspectionGroupFilter/InspectionGroupFilter.h"
@@ -168,13 +168,23 @@ std::vector<InspectionGroup> filterWithQueryStruct(const QueryFileStructure &que
 
     dumpQueryStruct(query_struct); // For debugging can remove later... not needed
     std::cout << std::endl;
+    std::cout << std::endl;
+
     // Debugging
     for(InspectionGroup a : list_records) {
         std::cout << a.toString() << std::endl;
     }
 
-    std::vector<InspectionGroup> filtered_records;
-    return InspectionGroupFilter::applyFilter(query_struct, filtered_records);
+
+    std::vector<InspectionGroup> filtered_records = InspectionGroupFilter::applyFilter(query_struct, list_records);
+
+    // More debugging
+    std::cout << "\n\nDumping out filtered records" << std::endl;
+    for(InspectionGroup a : filtered_records) {
+        std::cout << a.toString() << std::endl;
+    }
+
+    return filtered_records;
 
 }
 
@@ -229,7 +239,10 @@ int main(int argc, char* argv[])
         ("query,q", po::value<std::string>(), "Path to json you want to parse")
     ;
 
-    std::string hardCodedFileName = "C:/Users/jorda/CLionProjects/assessment/assessment1/data/q1.json";
+//    std::string hardCodedFileName = "C:/Users/jorda/CLionProjects/assessment/assessment1/data/q1.json";
+    std::string hardCodedFileName = "C:/Users/jorda/CLionProjects/assessment/assessment1/data/testjson/sample_json_1.json";
+
+
     json parsed_json = readJsonFile(hardCodedFileName);
 
     QueryFileStructure query_struct = extractQueryData(parsed_json); // Extract the json into that class we created to filter against.

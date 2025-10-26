@@ -3,64 +3,107 @@
 //
 
 #include "InspectionGroupFilter.h"
+#include "QueryFileStructure.h"
 
-#include "../../solution 2/FilterStruct.h"
+/**
+ * This is always present in the JSON file, it's mandatory
+ * @param my_group - A single row of InspectionGroup.
+ * @param query_struct - The struct you are going to filter by.
+ * @return true if it passes conditions
+ */
+bool InspectionGroupFilter::passesCroppedFilter(const InspectionGroup &my_group, const QueryFileStructure &query_struct) {
+    return query_struct.operator_crop.region.contains(my_group);
+}
 
-// Returns a filtered array.
+bool InspectionGroupFilter::passesCategoryFilter(const InspectionGroup &my_group, const QueryFileStructure &query_struct) {
+    // If it doesn't have a value or it matches the query struct than we are "good"
+    return !query_struct.operator_crop.category.has_value() ||
+        my_group.get_category() == query_struct.operator_crop.category.value();
+}
+
+bool InspectionGroupFilter::passesOneOfSetFilter(const InspectionGroup &my_group, const QueryFileStructure &query_struct) {
+    if (const auto& group_set_opt = query_struct.operator_crop.one_of_groups; group_set_opt.has_value()) {
+        return group_set_opt.value().count(my_group.get_group_id()) > 0;
+    }
+    return true; // Default to true if filter wasn't added in JSON file.
+}
+
+bool InspectionGroupFilter::passesProperFilter(const InspectionGroup &my_group,
+                                               const QueryFileStructure &query,
+                                               std::unordered_set<int64_t> &failed_region_group_ids ) {
+
+    if (const auto& proper_opt = query.operator_crop.proper; proper_opt.has_value()) {
+        // It's its false, we don't care about the filter so we just return true
+        if (!proper_opt.value()) {
+            return true;
+        }
+        if(query.valid_region.contains(my_group)) { // Satsifies region.
+            return true;
+        }
+
+        failed_region_group_ids.insert(my_group.get_group_id());
+        return false;
+    }
+
+    // If the filter was not supplied (has_value() is false), we pass automatically.
+    return true;
+}
+
+
+
+
+// Returns a filtered array, based on the inspection gruop parameters
 std::vector<InspectionGroup> InspectionGroupFilter::applyFilter
     (const QueryFileStructure &query_struct, const std::vector<InspectionGroup> &inspection_groups) {
 
     std::vector<InspectionGroup> result;
 
-    //// select points that meeet the following
-    // Check for category.
-    if(query_struct.operator_crop.category.has_value()) {
-        // Filter the vector by category number.
-    }
-    if(query_struct.operator_crop.one_of_groups.has_value()) {
-        // Filter the vector by w/e is in the set. Check if the set isn't empty.... unless has_value() does that for us.
-    }
-    if(query_struct.operator_crop.proper.has_value()) {
-        // Only include points where the ENTIRE group is valid.
+    std::unordered_set<int64_t> failed_region_group_ids;
 
-    }
+    // for(const auto &inspection_group : inspection_groups) {
+    //     if (passesCroppedFilter(inspection_group, query_struct) &&
+    //         passesCategoryFilter(inspection_group, query_struct) &&
+    //         passesOneOfSetFilter(inspection_group, query_struct) &&
+    //         passesProperFilter(inspection_group, query_struct, failed_region_group_ids)
+    //         ) {
+    //             result.push_back(inspection_group);
+    //         }
+    // }
 
+    // This is much longer than the for loop above but alot easier to use the debugger with, also short-circuits
+    for (const auto& inspection_group : inspection_groups) {
 
-    /// If this is true then we need to do a check to see if all the points are IN VALID_REGION. (not the region inside operrator_crop.)
-    bool proper_condition = (
-        !query_struct.operator_crop.one_of_groups.has_value() || query_struct.operator_crop.proper);
-
-    std::set<int64_t> my_set;
-    if((!query_struct.operator_crop.one_of_groups.has_value())) {
-        std::set<int64_t> my_set = query_struct.operator_crop.one_of_groups.value();
-    }
-
-    // Filter
-    for(int i = 0 ; i < inspection_groups.size() ; i++) {
-
-        bool category_condition = (!query_struct.operator_crop.category.has_value() ||
-            inspection_groups[i].get_category() == query_struct.operator_crop.category.value() // Category matches
-        );
-
-        /// Handle CROPPED region now.
-        int x = inspection_groups[i].get_x_coordinate();
-        int y = inspection_groups[i].get_y_coordinate();
-
-        query_struct.operator_crop.region.contains(x,y);
-
-
-
-        // Expand this if statement, it needs to satisfy multiple conditions.
-        if(category_condition) {
-            result.push_back(inspection_groups[i]);
+        if (!passesCroppedFilter(inspection_group, query_struct)) {
+            continue;
+        }
+        if (!passesCategoryFilter(inspection_group, query_struct)) {
+            continue;
         }
 
+        if (!passesOneOfSetFilter(inspection_group, query_struct)) {
+            continue;
+        }
 
+        if (!passesProperFilter(inspection_group, query_struct, failed_region_group_ids)) {
+            continue;
+        }
+
+        // --- If execution reaches here, all filters passed ---
+        result.push_back(inspection_group);
     }
 
 
 
 
+
+
+
+
+    auto new_end = std::remove_if(result.begin(), result.end(),
+        [&failed_region_group_ids](const InspectionGroup &group) {
+            return failed_region_group_ids.count(group.get_group_id());
+        });
+    result.erase(new_end, result.end()); // Can also use erase_if but that's C++20.
 
     return result;
 }

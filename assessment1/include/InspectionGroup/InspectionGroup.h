@@ -25,7 +25,7 @@ public:
     void set_category(long long category);
     void set_group(long long group);
 
-    std::int64_t get_group() const{return this->group_id;}
+    std::int64_t get_group_id() const{return this->group_id;}
     std::int64_t get_category() const{return this->category_id;};
     double get_x_coordinate() const{return this->x_coordinate;};
     double get_y_coordinate() const{return this->y_coordinate;};

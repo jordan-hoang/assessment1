@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 add_library(InspectionGroupFilter STATIC
         InspectionGroupFilter.cpp
         InspectionGroupFilter.h
+        QueryFileStructure.h
 )
 
 target_include_directories(InspectionGroupFilter PUBLIC
