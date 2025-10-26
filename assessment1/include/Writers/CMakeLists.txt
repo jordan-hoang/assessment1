@@ -1,0 +1,19 @@
+# record_lib/CMakeLists.txt
+project(ResultWriter)
+set(CMAKE_CXX_STANDARD 17)
+
+add_library(ResultWriter STATIC
+        ResultWriter.h
+        ResultWriter.cpp
+)
+
+# Anything links to this will get header.
+target_include_directories(ResultWriter PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+# Keep implementation private.
+target_link_libraries(ResultWriter
+        PRIVATE
+            InspectionGroup
+)

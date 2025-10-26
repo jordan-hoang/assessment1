@@ -5,7 +5,7 @@
 #include <pqxx/pqxx>
 #include <boost/program_options.hpp>
 
-#include "Record.h"
+#include "InspectionGroup.h"
 
 
 namespace po = boost::program_options;
@@ -16,7 +16,7 @@ namespace po = boost::program_options;
  * categories.txt, groups.txt and points.txt should be inside.
  * @param isGood - True if everything was good false if something went wrong.
  */
-std::vector<Record> parseFile(std::string filePath, bool &isGood) {
+std::vector<InspectionGroup> parseFile(std::string filePath, bool &isGood) {
 
     std::cout << "using path of : " << filePath << std::endl;
     if (!filePath.empty() && filePath.back() != '/') {
@@ -39,7 +39,7 @@ std::vector<Record> parseFile(std::string filePath, bool &isGood) {
 
     }
 
-    std::vector<Record> list_records;
+    std::vector<InspectionGroup> list_records;
     // Read files line by line
     std::string line_points, line_groups, line_categories; // Variables to hold lines as strings
     // 1. Use std::getline to read the ENTIRE line of each file as a string
@@ -132,7 +132,7 @@ int createDB(const std::string& connection_string) {
 
 
 // Writes to the database using lib.
-int writeToDB(const std::vector<Record>& records) {
+int writeToDB(const std::vector<InspectionGroup>& records) {
     /// Write to db here.
     std::string connection_string =
             "host=localhost "
@@ -150,12 +150,16 @@ int writeToDB(const std::vector<Record>& records) {
         // 2. Establish the connection
         pqxx::connection C(connection_string);
         std::cout << "Connected to database " << C.dbname() << " successfully!" << std::endl;
-
         pqxx::work W(C);
+
+        ///// Clear any prexisting values in database tables first, just for faster debugging.
+        W.exec_params("TRUNCATE TABLE inspection_group;");
+        W.exec_params("TRUNCATE TABLE inspection_region;");
+        W.commit();
+
         std::set<std::int64_t> unique_groups;
         for (const auto& record : records) {
-            auto group_id = static_cast<std::int64_t>(record.get_group());
-            std::cout << group_id << std::endl; // DEBUG!!!
+            auto group_id = static_cast<std::int64_t>(record.get_group_id());
             unique_groups.insert(group_id);
         }
 
@@ -177,19 +181,19 @@ int writeToDB(const std::vector<Record>& records) {
              category | integer          |           |          |
          */
          long long region_id_counter = get_next_available_id(C, "inspection_region");
-         for (const auto& record : records) {
-             W.exec_params(
-                 "INSERT INTO inspection_region (id, group_id, coord_x, coord_y, category) "
-                 "VALUES ($1, $2, $3, $4, $5)",
-                 region_id_counter++,
-                 record.get_group(),
-                 record.get_x_coordinate(),
-                 record.get_y_coordinate(),
-                 record.get_category()
-             );
-         }
-         W.commit();
-
+        for (const auto& record : records) {
+            W.exec_params(
+                "INSERT INTO inspection_region (id, group_id, coord_x, coord_y, category) "
+                "VALUES ($1, $2, $3, $4, $5)",
+                region_id_counter++,
+                record.get_group_id(),
+                record.get_x_coordinate(),
+                record.get_y_coordinate(),
+                record.get_category()
+            );
+        }
+        W.commit();
+        std::cout << "Finishing writing to database" << std::endl;
     }
     catch (const std::exception &e) {
         // 6. Handle errors
@@ -229,7 +233,7 @@ int main(int argc, char* argv[])
         std::cout << "path entered: " << path << std::endl;
 
         bool isGood = true;
-        std::vector<Record> myRecord = parseFile(path, isGood);
+        std::vector<InspectionGroup> myRecord = parseFile(path, isGood);
         if(!isGood) {
             std::cerr << "Could not parse files inside of: " << path << std::endl;
             return -1;
