@@ -22,7 +22,9 @@ class LeafNode : public IQueryOperator {
         // @param crop_json_data The JSON object associated with "operator_crop".
         explicit LeafNode(const nlohmann::json& crop_json_data);
 
-        // DUMMY CONSTRUCTOR TO MAKE COMPILER HAPPY DO NOT USE.
+        explicit LeafNode(CropQueryParameters p);
+
+        // DUMMY CONSTRUCTOR TO MAKE COMPILER HAPPY DO NOT USE / DELETE LATER NOT NECESSARY.
         explicit LeafNode();
 
         std::unique_ptr<IQueryOperator> evaluate() const override;

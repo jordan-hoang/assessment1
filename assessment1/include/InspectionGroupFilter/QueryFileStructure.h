@@ -35,7 +35,7 @@ struct Region {
     Point p_min;
     Point p_max;
     // Checks if a given point is inside the region.
-    bool contains(int px, int py) const {
+    bool contains(double px, double py) const {
         return (px < p_max.x &&
                 px > p_min.x &&
                 py < p_max.y &&
@@ -46,6 +46,21 @@ struct Region {
     bool contains(const InspectionGroup &myGroup) const {
         return contains(myGroup.get_x_coordinate(), myGroup.get_y_coordinate());
     }
+
+
+    static Region intersectRegions(const Region &a, const Region &b) {
+        Region result;
+        // You need to take the more strict value so for minimum values take the bigger one.
+        result.p_min.x = std::max(a.p_min.x, b.p_min.x);
+        result.p_min.y = std::max(a.p_min.y, b.p_min.y);
+
+        // And for maxes take the minimum.
+        result.p_max.x = std::min(a.p_max.x, b.p_max.x);
+        result.p_max.y = std::min(a.p_max.y, b.p_max.y);
+
+        return result;
+    }
+
 
 
 };
@@ -99,6 +114,12 @@ struct CropQueryParameters {
         }
 
     }
+
+
+    void dumpCropQueryParameters() const {
+        dumpCropQueryParameters(*this);
+    }
+
 
 
 

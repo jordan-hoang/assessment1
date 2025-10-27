@@ -9,9 +9,9 @@
 
 /**
  * @brief Implements the logical OR operation, inheriting the children list
- * from LogicalOperator.
- * Applies all child filters independently to the original input data
- * and then takes the union of all resulting filtered sets.
+ * from LogicalOperator. All of it's children will eventually at somepoint be ORed.
+ * And all of its children when evaaluated will be a leafNode.
+ *
  */
 class OrOperator : public LogicalOperator {
 
@@ -26,11 +26,15 @@ class OrOperator : public LogicalOperator {
     std::unique_ptr<IQueryOperator> executeOR(std::unique_ptr<IQueryOperator> accumulator,
                                                std::unique_ptr<IQueryOperator> nodeToCombine) const{
 
-        // auto leafA = dynamic_cast<LeafNode*>(accumulator.get());
-        // auto leafB = dynamic_cast<LeafNode*>(nodeToCombine.get());
+        std::cout << "UNIMPLEMENTED OPERATOR_OR";
+        throw std::runtime_error("UNIMPLEMENTED OPERATOR_OR");
 
 
-        /// THIS IS BROKEN FOR NOW...... OR UNIMPLEMENTED
+        auto leafA = dynamic_cast<LeafNode*>(accumulator.get());
+        auto leafB = dynamic_cast<LeafNode*>(nodeToCombine.get());
+
+
+
         return std::make_unique<LeafNode>();
     }
 public:

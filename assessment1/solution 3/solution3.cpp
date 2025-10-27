@@ -12,6 +12,7 @@
 #include "QueryFileStructure.h"
 #include "ResultWriter.h"
 #include "json.hpp"
+#include "LeafNode.h"
 #include "QueryBuilder.h"
 
 
@@ -70,22 +71,20 @@ QueryFileStructure extractQueryData(const json& my_json) {
         query_data.valid_region.p_max.x = vr_json.at("p_max").at("x").get<double>();
         query_data.valid_region.p_max.y = vr_json.at("p_max").at("y").get<double>();
 
-        // 2. Extract operator_crop Block (required)
-        // FOR THIS WE NEED TO USE THE RECURSIVE STUFF WE JUST CREATED.
-        //const json& oc_json = my_json.at("query").at("operator_crop");
-
+        // 2.) Extract operator_crop Block
+        // FOR THIS WE NEED TO USE THE RECURSIVE Stuff / Abstract Syntax Tree.
+        // const json& oc_json = my_json.at("query").at("operator_crop");
         auto root = QueryBuilder::parse_query_root(my_json.at("query"));
         auto result = root->evaluate();  // executes all the ANDS and OR Operations.
+        // Cast result into leafNode and then assign it to operator crop.
+        auto leafA = dynamic_cast<LeafNode*>(result.get());
+        query_data.operator_crop = leafA->getCropParams();
 
-
-
-
-
-
+        // DEBUG prints
+        // std::cout << "Final combined cropQuery" << std::endl;
+        // leafA->getCropParams().dumpCropQueryParameters();
 
     } catch (const json::exception& e) {
-        // Catch exceptions caused by missing REQUIRED fields (due to .at())
-        // or incorrect type conversion (due to .get<T>()).
         std::string error_msg = "Required Data Extraction Error: Missing or malformed required JSON field. Details: ";
         error_msg += e.what();
         throw std::runtime_error(error_msg);
@@ -136,7 +135,6 @@ std::vector<InspectionGroup> readRecordsFromDB() {
 }
 
 
-
 /**
  *
  * @param query_struct - The query struct you are going to filter the list_records by.
@@ -144,7 +142,6 @@ std::vector<InspectionGroup> readRecordsFromDB() {
  * @return A filtered list of list_records.
  */
 std::vector<InspectionGroup> filterWithQueryStruct(const QueryFileStructure &query_struct, const std::vector<InspectionGroup> &list_records) {
-
     /* For debugging */
     QueryFileStructure::dumpQueryStruct(query_struct);
     std::cout << std::endl;
@@ -152,7 +149,6 @@ std::vector<InspectionGroup> filterWithQueryStruct(const QueryFileStructure &que
     for(InspectionGroup a : list_records) {
         std::cout << a.toString() << std::endl;
     }
-
 
     std::vector<InspectionGroup> filtered_records = InspectionGroupFilter::applyFilter(query_struct, list_records);
 
@@ -173,10 +169,12 @@ void executeQuery(const std::string &path_to_json) {
     json parsed_json = readJsonFile(path_to_json);
     QueryFileStructure query_struct = extractQueryData(parsed_json); // Extract the json into that class we created to filter against.
 
+    std::cout << std::endl;
+    //QueryFileStructure::dumpQueryStruct(query_struct);
+    std::vector<InspectionGroup> list_records = readRecordsFromDB(); // Fetch all the database results.
+    std::vector<InspectionGroup> filtered_records = filterWithQueryStruct(query_struct, list_records); // Now filter list_records
+    ResultWriter::writeToTextFile(filtered_records);
 
-    //std::vector<InspectionGroup> list_records = readRecordsFromDB(); // Fetch all the database results.
-    //std::vector<InspectionGroup> filtered_records = filterWithQueryStruct(query_struct, list_records); // Now filter list_records
-    //ResultWriter::writeToTextFile(filtered_records);
 }
 
 
@@ -216,9 +214,9 @@ int main(int argc, char* argv[])
 
     else {
         // For faster testing
-        std::string hardCodedFileName = "../../data/testjson/json_and_test_one.json";
+        std::string hardCodedFileName = "../../data/testjson/json_and_test_three.json";
         executeQuery(hardCodedFileName);
-        //std::cout << "No arguments entered" << std::endl;
+        std::cout << "No arguments entered" << std::endl;
     }
 
     return 0;

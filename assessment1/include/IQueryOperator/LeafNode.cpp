@@ -4,15 +4,14 @@
 
 #include "LeafNode.h"
 
+#include <utility>
 
-
-
-
-
+/**
+ * Basically parses the JSON and turns it into a CropQueryParameters object.
+ * @param crop_json_data The JSON Data
+ */
 LeafNode::LeafNode(const nlohmann::json &crop_json_data) {
-
-
-    std::cout << crop_json_data << std::endl;
+    // std::cout << crop_json_data << std::endl; // FOR DEBUG
 
     CropQueryParameters crop_query;
 
@@ -52,15 +51,13 @@ LeafNode::LeafNode(const nlohmann::json &crop_json_data) {
 
     CropQueryParameters::dumpCropQueryParameters(crop_query); // FOR DEBUG
     std::cout << std::endl;
-
     this->cropParams = std::move(crop_query); // Will this line copy over correctly??
-
 
 }
 
 
-LeafNode::LeafNode() {
-    cropParams.category = 0; // This is unimportant, do not use this.
+LeafNode::LeafNode(CropQueryParameters p) {
+    this->cropParams = std::move(p);
 }
 
 

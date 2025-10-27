@@ -13,8 +13,7 @@ std::unique_ptr<IQueryOperator> parseJson(const nlohmann::json& my_json) {
     // Each query node (leaf or composite) must be a JSON object with exactly one key (the operator type).
     // Base case this is the "leaf node"
     if(my_json.contains("operator_crop")) {
-        //return std::make_unique<LeafNode>(my_json["operator_crop"]); // This one isn't recursive it's liket he base case.
-        return std::make_unique<LeafNode>(my_json); // This one isn't recursive it's liket he base case.
+        return std::make_unique<LeafNode>(my_json); // This one isn't recursive it's like the base case,
     }
 
     if(my_json.contains("operator_and")) {
@@ -24,8 +23,11 @@ std::unique_ptr<IQueryOperator> parseJson(const nlohmann::json& my_json) {
         }
         return andOp;
     } else if(my_json.contains("operator_or")) {
-        std::cout << "UNIMPLEMENTED OPERATOR_OR";
-        throw std::runtime_error("UNIMPLEMENTED OPERATOR_OR");
+        auto orOP = std::make_unique<AndOperator>();
+        for (const auto& child : my_json["operator_and"]) {
+            orOP->add_child(parseJson(child));
+        }
+        return orOP;
     } else {
         throw std::runtime_error("Unknown operator type in JSON");
     }

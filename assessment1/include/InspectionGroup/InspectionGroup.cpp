@@ -20,6 +20,7 @@ void InspectionGroup::set_group(long long group) {
     this->group_id = group;
 }
 
+// Dump out for debugging.
 std::string InspectionGroup::toString() {
     std::string output;
     output += "X-Coordinate: " + std::to_string(x_coordinate) + " Y-Coordinate: " + std::to_string(y_coordinate);
