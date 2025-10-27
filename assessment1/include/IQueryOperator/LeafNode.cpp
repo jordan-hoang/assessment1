@@ -49,9 +49,7 @@ LeafNode::LeafNode(const nlohmann::json &crop_json_data) {
         }
     }
 
-    CropQueryParameters::dumpCropQueryParameters(crop_query); // FOR DEBUG
-    std::cout << std::endl;
-    this->cropParams = std::move(crop_query); // Will this line copy over correctly??
+    this->cropParams = std::move(crop_query);
 
 }
 

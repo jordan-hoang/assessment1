@@ -15,22 +15,22 @@ std::unique_ptr<IQueryOperator> parseJson(const nlohmann::json& my_json) {
     if(my_json.contains("operator_crop")) {
         return std::make_unique<LeafNode>(my_json); // This one isn't recursive it's like the base case,
     }
-
     if(my_json.contains("operator_and")) {
         auto andOp = std::make_unique<AndOperator>();
         for (const auto& child : my_json["operator_and"]) {
             andOp->add_child(parseJson(child));
         }
         return andOp;
-    } else if(my_json.contains("operator_or")) {
+    }
+    if(my_json.contains("operator_or")) {
         auto orOP = std::make_unique<AndOperator>();
         for (const auto& child : my_json["operator_and"]) {
             orOP->add_child(parseJson(child));
         }
         return orOP;
-    } else {
-        throw std::runtime_error("Unknown operator type in JSON");
     }
+
+    throw std::runtime_error("Unknown operator type in JSON");
 
 
 }

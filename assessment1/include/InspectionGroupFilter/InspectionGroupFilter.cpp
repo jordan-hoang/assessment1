@@ -59,36 +59,16 @@ std::vector<InspectionGroup> InspectionGroupFilter::applyFilter
     std::vector<InspectionGroup> result;
 
     std::unordered_set<int64_t> failed_region_group_ids;
-
-    // for(const auto &inspection_group : inspection_groups) {
-    //     if (passesCroppedFilter(inspection_group, query_struct) &&
-    //         passesCategoryFilter(inspection_group, query_struct) &&
-    //         passesOneOfSetFilter(inspection_group, query_struct) &&
-    //         passesProperFilter(inspection_group, query_struct, failed_region_group_ids)
-    //         )
-    //         {
-    //             result.push_back(inspection_group);
-    //         }
-    // } // Nice and compact, but tricky to use with debugger.
-
-    // This is much longer than the for loop above but alot easier to use the debugger with, also short-circuits
-    for (const auto& inspection_group : inspection_groups) {
-        if (!passesCroppedFilter(inspection_group, query_struct)) {
-            continue;
-        }
-        if (!passesCategoryFilter(inspection_group, query_struct)) {
-            continue;
-        }
-        if (!passesOneOfSetFilter(inspection_group, query_struct)) {
-            continue;
-        }
-        if (!passesProperFilter(inspection_group, query_struct, failed_region_group_ids)) {
-            continue;
-        }
-        // --- If execution reaches here, all filters passed ---
-        result.push_back(inspection_group);
-    }
-
+    for(const auto &inspection_group : inspection_groups) {
+        if (passesCroppedFilter(inspection_group, query_struct) &&
+            passesCategoryFilter(inspection_group, query_struct) &&
+            passesOneOfSetFilter(inspection_group, query_struct) &&
+            passesProperFilter(inspection_group, query_struct, failed_region_group_ids)
+            )
+            {
+                result.push_back(inspection_group);
+            }
+    } // Nice and compact, but tricky to use with debugger.
 
     auto new_end = std::remove_if(result.begin(), result.end(),
         [&failed_region_group_ids](const InspectionGroup &group) {

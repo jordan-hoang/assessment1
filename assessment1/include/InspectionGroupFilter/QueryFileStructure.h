@@ -16,7 +16,7 @@
 #include <ostream>
 
 #include "InspectionGroup.h"
-#include "IQueryOperator.h"
+#include "IQueryOperator.h" /// THIS IS ONLY USED FOR SOLUTION 3.
 
 
 /**

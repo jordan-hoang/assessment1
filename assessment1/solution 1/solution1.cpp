@@ -105,8 +105,6 @@ int createDB(const std::string& connection_string) {
         // 2. Establish the connection
         pqxx::connection C(connection_string);
         pqxx::work W(C);
-
-        // 2️⃣ Read the schema file into a string
         std::ifstream file("assessment1/schema.pgsql");
 
         if (!file.is_open()) {
@@ -122,7 +120,6 @@ int createDB(const std::string& connection_string) {
         W.commit();
     }
     catch (const std::exception &e) {
-        // 6. Handle errors
         std::cerr << "Database connection or query failed: " << e.what() << std::endl;
         return -1;
     }
@@ -147,7 +144,6 @@ int writeToDB(const std::vector<InspectionGroup>& records) {
     }
 
     try {
-        // 2. Establish the connection
         pqxx::connection C(connection_string);
         std::cout << "Connected to database " << C.dbname() << " successfully!" << std::endl;
         pqxx::work W(C);
@@ -207,6 +203,7 @@ int writeToDB(const std::vector<InspectionGroup>& records) {
 
 int main(int argc, char* argv[])
 {
+    // "../../data/0" works quite well.;
     po::options_description desc("Allowed options");
     desc.add_options()
         ("help,h", "Show help message")
@@ -231,7 +228,6 @@ int main(int argc, char* argv[])
     if (vm.count("data_directory")) {
         std::string path = vm["data_directory"].as<std::string>();
         std::cout << "path entered: " << path << std::endl;
-
         bool isGood = true;
         std::vector<InspectionGroup> myRecord = parseFile(path, isGood);
         if(!isGood) {

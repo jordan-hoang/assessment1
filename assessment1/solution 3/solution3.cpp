@@ -143,25 +143,23 @@ std::vector<InspectionGroup> readRecordsFromDB() {
  */
 std::vector<InspectionGroup> filterWithQueryStruct(const QueryFileStructure &query_struct, const std::vector<InspectionGroup> &list_records) {
     /* For debugging */
-    QueryFileStructure::dumpQueryStruct(query_struct);
-    std::cout << std::endl;
-    std::cout << std::endl;
-    for(InspectionGroup a : list_records) {
-        std::cout << a.toString() << std::endl;
-    }
+    // QueryFileStructure::dumpQueryStruct(query_struct);
+    // std::cout << std::endl;
+    // std::cout << std::endl;
+    // for(InspectionGroup a : list_records) {
+    //     std::cout << a.toString() << std::endl;
+    // }
 
     std::vector<InspectionGroup> filtered_records = InspectionGroupFilter::applyFilter(query_struct, list_records);
 
     // More debugging dumps
-    std::cout << "\n\nDumping out filtered records" << std::endl;
+    std::cout << "\n\nDumping out filtered records to console...." << std::endl;
     for(InspectionGroup a : filtered_records) {
         std::cout << a.toString() << std::endl;
     }
 
     return filtered_records;
 }
-
-
 
 
 
