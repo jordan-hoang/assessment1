@@ -168,7 +168,7 @@ void executeQuery(const std::string &path_to_json) {
     QueryFileStructure query_struct = extractQueryData(parsed_json); // Extract the json into that class we created to filter against.
 
     std::cout << std::endl;
-    //QueryFileStructure::dumpQueryStruct(query_struct);
+    QueryFileStructure::dumpQueryStruct(query_struct);
     std::vector<InspectionRegion> list_records = readRecordsFromDB(); // Fetch all the database results.
     std::vector<InspectionRegion> filtered_records = filterWithQueryStruct(query_struct, list_records); // Now filter list_records
     ResultWriter::writeToTextFile(filtered_records);
@@ -212,7 +212,9 @@ int main(int argc, char* argv[])
 
     else {
         // For faster testing
-        std::string hardCodedFileName = "../../data/testjson/json_and_test_three.json";
+        //std::string hardCodedFileName = "../../data/testjson/json_and_test_three.json";
+        std::string hardCodedFileName = "../../data/testjson/json_or_test.json";
+
         executeQuery(hardCodedFileName);
         std::cout << "No arguments entered" << std::endl;
     }

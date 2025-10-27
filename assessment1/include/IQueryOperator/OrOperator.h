@@ -26,16 +26,50 @@ class OrOperator : public LogicalOperator {
     std::unique_ptr<IQueryOperator> executeOR(std::unique_ptr<IQueryOperator> accumulator,
                                                std::unique_ptr<IQueryOperator> nodeToCombine) const{
 
-        std::cout << "UNIMPLEMENTED OPERATOR_OR";
-        throw std::runtime_error("UNIMPLEMENTED OPERATOR_OR");
-
 
         auto leafA = dynamic_cast<LeafNode*>(accumulator.get());
         auto leafB = dynamic_cast<LeafNode*>(nodeToCombine.get());
 
+        // We need to combine these leafNodes by creating a new one.
+        CropQueryParameters crop_query;
+
+        ///////////// REQUIRED ///////////////
+        crop_query.region = Region::unionRegions(leafA->getCropParams().region, leafB->getCropParams().region);
+        ///////////////////////////////////////
+        ///
+        /// 3 optionals.
+
+        // --- CATEGORY: take any present value we can't put them in a list unfortunatley. ---
+        auto catA = leafA->getCropParams().category;
+        auto catB = leafB->getCropParams().category;
+        if (catA.has_value()) {
+            crop_query.category = catA;
+        } else if (catB.has_value()) {
+            crop_query.category = catB;
+        } else {
+            crop_query.category.reset();
+        }
+
+        // Do proper.
+        bool properA = leafA->getCropParams().proper.value_or(false);  // If missing value make it false.
+        bool properB = leafB->getCropParams().proper.value_or(false);
+        crop_query.proper = (properA || properB);
 
 
-        return std::make_unique<LeafNode>();
+        // Take whats in common from both of the sets and create a new set of whats in common between them.
+        const auto& groupsA = leafA->getCropParams().one_of_groups.value_or(std::set<int64_t>{});
+        const auto& groupsB = leafB->getCropParams().one_of_groups.value_or(std::set<int64_t>{});
+        std::set<std::int64_t> combined;
+        std::set_union(
+            groupsA.begin(), groupsA.end(),
+            groupsB.begin(), groupsB.end(),
+            std::inserter(combined, combined.begin())
+        );
+
+        crop_query.one_of_groups = combined;
+
+        return std::make_unique<LeafNode>(crop_query);
+
     }
 public:
     OrOperator() = default;

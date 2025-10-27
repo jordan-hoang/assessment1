@@ -63,6 +63,18 @@ struct Region {
         return result;
     }
 
+    // Make it as big as possible. Unfortunatley if their are gaps it will include the gaps as well.
+    static Region unionRegions(const Region& a, const Region& b) {
+        Region result;
+        result.p_min.x = std::min(a.p_min.x, b.p_min.x);
+        result.p_min.y = std::min(a.p_min.y, b.p_min.y);
+        result.p_max.x = std::max(a.p_max.x, b.p_max.x);
+        result.p_max.y = std::max(a.p_max.y, b.p_max.y);
+        return result;
+    }
+
+
+
 
 
 };

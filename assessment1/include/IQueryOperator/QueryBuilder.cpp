@@ -22,16 +22,17 @@ std::unique_ptr<IQueryOperator> parseJson(const nlohmann::json& my_json) {
         }
         return andOp;
     }
+
     if(my_json.contains("operator_or")) {
-        auto orOP = std::make_unique<AndOperator>();
-        for (const auto& child : my_json["operator_and"]) {
+        auto orOP = std::make_unique<OrOperator>();
+        for (const auto& child : my_json["operator_or"]) {
             orOP->add_child(parseJson(child));
         }
         return orOP;
     }
 
-    throw std::runtime_error("Unknown operator type in JSON");
 
+    throw std::runtime_error("Unknown operator type in JSON");
 
 }
 
