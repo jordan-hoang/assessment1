@@ -24,6 +24,11 @@ namespace po = boost::program_options;
  * @return The parsed json object, or an empty object on failure.
  */
 json readJsonFile(const std::string& queryFilePath) {
+
+    std::filesystem::path cwd = std::filesystem::current_path();
+    std::cout << "Current working directory: " << cwd << '\n';
+
+
     std::ifstream i(queryFilePath);
     if (!i.is_open()) {
         std::cerr << "Error: Could not open query file: " << queryFilePath << std::endl;
@@ -130,7 +135,6 @@ InspectionGroup map_row_to_record(const pqxx::row& row) {
 
 
 /**
- *
  * @param queryFilePath
  * @return vector of records from the inspection_region table.
  */
@@ -159,14 +163,14 @@ std::vector<InspectionGroup> readRecordsFromDB() {
 
 /**
  *
- * @param query_struct - The query struct you are going to filter list_records by.
+ * @param query_struct - The query struct you are going to filter the list_records by.
  * @param list_records - List of records.
  * @return A filtered list of list_records.
  */
 std::vector<InspectionGroup> filterWithQueryStruct(const QueryFileStructure &query_struct, const std::vector<InspectionGroup> &list_records) {
 
     /* For debugging */
-    QueryFileStructure::dumpQueryStruct(query_struct); // For debugging can remove later... not needed
+    QueryFileStructure::dumpQueryStruct(query_struct);
     std::cout << std::endl;
     std::cout << std::endl;
     for(InspectionGroup a : list_records) {
@@ -183,7 +187,6 @@ std::vector<InspectionGroup> filterWithQueryStruct(const QueryFileStructure &que
     }
 
     return filtered_records;
-
 }
 
 
@@ -210,9 +213,6 @@ int main(int argc, char* argv[])
         ("test,t", "Hardcoded path used for fast testing.")
     ;
 
-    //  std::string hardCodedFileName = "C:/Users/jorda/CLionProjects/assessment/assessment1/data/q1.json";
-    // std::string hardCodedFileName = "C:/Users/jorda/CLionProjects/assessment/assessment1/data/testjson/sample_json_1.json";
-
     po::variables_map vm;
     try {
         po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -233,11 +233,14 @@ int main(int argc, char* argv[])
         executeQuery(path);
 
     } else if (vm.count("test")) {
-        std::string hardCodedFileName = "C:/Users/jorda/CLionProjects/assessment/assessment1/data/testjson/sample_json_1.json";
+        std::string hardCodedFileName = "../../data/testjson/sample_json_1.json";
         executeQuery(hardCodedFileName);
     }
 
     else {
+        // For faster testing
+        std::string hardCodedFileName = "../../data/testjson/sample_json_1.json";
+        executeQuery(hardCodedFileName);
         std::cout << "No arguments entered" << std::endl;
     }
 

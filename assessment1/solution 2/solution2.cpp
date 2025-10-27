@@ -204,9 +204,6 @@ int main(int argc, char* argv[])
         ("test,t", "Hardcoded path used for fast testing.")
     ;
 
-    //  std::string hardCodedFileName = "C:/Users/jorda/CLionProjects/assessment/assessment1/data/q1.json";
-    // std::string hardCodedFileName = "C:/Users/jorda/CLionProjects/assessment/assessment1/data/testjson/sample_json_1.json";
-
     po::variables_map vm;
     try {
         po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -227,7 +224,7 @@ int main(int argc, char* argv[])
         executeQuery(path);
 
     } else if (vm.count("test")) {
-        std::string hardCodedFileName = "C:/Users/jorda/CLionProjects/assessment/assessment1/data/testjson/sample_json_1.json";
+        std::string hardCodedFileName = "../../data/testjson/sample_json_1.json";
         executeQuery(hardCodedFileName);
     }
 
