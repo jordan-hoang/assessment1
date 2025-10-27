@@ -21,3 +21,10 @@ target_include_directories(ExternalHeaders INTERFACE
 add_subdirectory("solution_1")
 add_subdirectory("solution_2")
 add_subdirectory("solution_3")
+
+
+option(BUILD_TESTS "Build the tests" ON)
+if(BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
