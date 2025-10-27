@@ -2,7 +2,7 @@
 #define QUERYBUILDER_H
 
 #include "IQueryOperator.h" // Defines the IQueryOperator interface
-#include "json.hpp"         // Defines the nlohmann::json type
+#include <nlohmann_json/json.hpp>
 #include <memory>
 
 
