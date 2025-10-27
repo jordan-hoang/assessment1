@@ -7,7 +7,9 @@
 
 #include <unordered_set>
 #include <vector>
-#include "InspectionGroup.h"
+#include "InspectionRegion.h"
+
+
 struct QueryFileStructure;
 
 // Utility class that applies filter. Only has static methods.
@@ -18,19 +20,19 @@ class InspectionGroupFilter {
 public:
     InspectionGroupFilter() = delete;
 
-    static std::vector<InspectionGroup> applyFilter(
+    static std::vector<InspectionRegion> applyFilter(
         const QueryFileStructure& query_struct,
-        const std::vector<InspectionGroup>& inspection_groups
+        const std::vector<InspectionRegion>& inspection_groups
     );
 private:
 
     // Maybe not needed.
-    static void properFilter(const QueryFileStructure& query_struct, std::vector<InspectionGroup>& result);
-    static bool passesCroppedFilter(const InspectionGroup &my_group,  const QueryFileStructure &query);
-    static bool passesCategoryFilter(const InspectionGroup &my_group,  const QueryFileStructure &query);
-    static bool passesOneOfSetFilter(const InspectionGroup &my_group,  const QueryFileStructure &query);
+    static void properFilter(const QueryFileStructure& query_struct, std::vector<InspectionRegion>& result);
+    static bool passesCroppedFilter(const InspectionRegion &my_group,  const QueryFileStructure &query);
+    static bool passesCategoryFilter(const InspectionRegion &my_group,  const QueryFileStructure &query);
+    static bool passesOneOfSetFilter(const InspectionRegion &my_group,  const QueryFileStructure &query);
 
-    static bool passesProperFilter(const InspectionGroup &my_group,  const QueryFileStructure &query,
+    static bool passesProperFilter(const InspectionRegion &my_group,  const QueryFileStructure &query,
                                    std::unordered_set<int64_t> &failed_region_group_ids);
 
 };

@@ -9,7 +9,7 @@
 
 namespace ResultWriter {
 
-    void writeToTextFile(const std::vector<InspectionGroup>& records,
+    void writeToTextFile(const std::vector<InspectionRegion>& records,
                          const std::string& filename
     ) {
 
@@ -18,9 +18,9 @@ namespace ResultWriter {
         // Takes in a bunch of records and writes it to a file.
         // We'll need to sort it by y and x, ascending I guess. not too hard.
         // I guess we'll copy over the vector, sort it and then write it.
-        std::vector<InspectionGroup> sorted_list = records; // copy it.
+        std::vector<InspectionRegion> sorted_list = records; // copy it.
         std::sort(sorted_list.begin(),sorted_list.end(),
-            [](const InspectionGroup &a, const InspectionGroup &b) {
+            [](const InspectionRegion &a, const InspectionRegion &b) {
                     // return true if a comes before b. A is closer to the beginning.
                     if(a.get_y_coordinate() == b.get_y_coordinate()) { // y is the same use x.
                         return a.get_x_coordinate() < b.get_x_coordinate();

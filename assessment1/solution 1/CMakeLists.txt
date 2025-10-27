@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 find_package(Boost COMPONENTS program_options)
 find_package(libpqxx CONFIG REQUIRED)
-add_executable(solution1 "main.cpp")
+add_executable(solution1 "solution1.cpp")
 
 # Include Boost headers (ensure IDE sees them)
 target_include_directories(solution1
@@ -17,7 +17,7 @@ target_link_libraries(solution1
         PRIVATE
         ${Boost_LIBRARIES}
         libpqxx::pqxx
-        InspectionGroup
+        InspectionRegion
 )
 
 # Copy it over schema files to read from for cmakebuild_debug.
@@ -29,6 +29,6 @@ configure_file(
 ### Add Record header and cpp file to it.
 set(RECORD_BIN_DIR "${CMAKE_CURRENT_BINARY_DIR}/InspectionGroup")
 add_subdirectory(
-        "../include/InspectionGroup"
+        "../include/InspectionRegion"
         ${CMAKE_CURRENT_BINARY_DIR}/record_core_lib
 )

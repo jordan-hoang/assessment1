@@ -5,7 +5,7 @@
 #include <pqxx/pqxx>
 #include <boost/program_options.hpp>
 
-#include "InspectionGroup.h"
+#include "InspectionRegion.h"
 
 
 namespace po = boost::program_options;
@@ -16,7 +16,7 @@ namespace po = boost::program_options;
  * categories.txt, groups.txt and points.txt should be inside.
  * @param isGood - True if everything was good false if something went wrong.
  */
-std::vector<InspectionGroup> parseFile(std::string filePath, bool &isGood) {
+std::vector<InspectionRegion> parseFile(std::string filePath, bool &isGood) {
 
     std::cout << "using path of : " << filePath << std::endl;
     if (!filePath.empty() && filePath.back() != '/') {
@@ -39,7 +39,7 @@ std::vector<InspectionGroup> parseFile(std::string filePath, bool &isGood) {
 
     }
 
-    std::vector<InspectionGroup> list_records;
+    std::vector<InspectionRegion> list_records;
     // Read files line by line
     std::string line_points, line_groups, line_categories; // Variables to hold lines as strings
     // 1. Use std::getline to read the ENTIRE line of each file as a string
@@ -75,7 +75,7 @@ std::vector<InspectionGroup> parseFile(std::string filePath, bool &isGood) {
 
 }
 
-// Function to find the maximum ID and return the next available ID, not sure if needed....
+// Function to find the maximum ID and return the next available ID. Not needed since we wipe the table. Oh well.
 long long get_next_available_id(pqxx::connection& C, const std::string& table_name) {
     try {
         pqxx::nontransaction N(C);
@@ -105,8 +105,6 @@ int createDB(const std::string& connection_string) {
         // 2. Establish the connection
         pqxx::connection C(connection_string);
         pqxx::work W(C);
-
-        // 2️⃣ Read the schema file into a string
         std::ifstream file("assessment1/schema.pgsql");
 
         if (!file.is_open()) {
@@ -122,7 +120,6 @@ int createDB(const std::string& connection_string) {
         W.commit();
     }
     catch (const std::exception &e) {
-        // 6. Handle errors
         std::cerr << "Database connection or query failed: " << e.what() << std::endl;
         return -1;
     }
@@ -132,7 +129,7 @@ int createDB(const std::string& connection_string) {
 
 
 // Writes to the database using lib.
-int writeToDB(const std::vector<InspectionGroup>& records) {
+int writeToDB(const std::vector<InspectionRegion>& records) {
     /// Write to db here.
     std::string connection_string =
             "host=localhost "
@@ -147,7 +144,6 @@ int writeToDB(const std::vector<InspectionGroup>& records) {
     }
 
     try {
-        // 2. Establish the connection
         pqxx::connection C(connection_string);
         std::cout << "Connected to database " << C.dbname() << " successfully!" << std::endl;
         pqxx::work W(C);
@@ -207,6 +203,7 @@ int writeToDB(const std::vector<InspectionGroup>& records) {
 
 int main(int argc, char* argv[])
 {
+    // "../../data/0" works quite well.;
     po::options_description desc("Allowed options");
     desc.add_options()
         ("help,h", "Show help message")
@@ -231,9 +228,8 @@ int main(int argc, char* argv[])
     if (vm.count("data_directory")) {
         std::string path = vm["data_directory"].as<std::string>();
         std::cout << "path entered: " << path << std::endl;
-
         bool isGood = true;
-        std::vector<InspectionGroup> myRecord = parseFile(path, isGood);
+        std::vector<InspectionRegion> myRecord = parseFile(path, isGood);
         if(!isGood) {
             std::cerr << "Could not parse files inside of: " << path << std::endl;
             return -1;
