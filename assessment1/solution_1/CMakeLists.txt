@@ -15,9 +15,9 @@ target_include_directories(solution1
 # Link Boost libraries using Boost_LIBRARIES to avoid imported target issues
 target_link_libraries(solution1
         PRIVATE
-        ${Boost_LIBRARIES}
-        libpqxx::pqxx
-        InspectionRegion
+            ${Boost_LIBRARIES}
+            libpqxx::pqxx
+            InspectionRegion
 )
 
 # Copy it over schema files to read from for cmakebuild_debug.
@@ -26,9 +26,3 @@ configure_file(
         ${CMAKE_BINARY_DIR}/assessment1/schema.pgsql
         COPYONLY)
 
-### Add Record header and cpp file to it.
-set(RECORD_BIN_DIR "${CMAKE_CURRENT_BINARY_DIR}/InspectionGroup")
-add_subdirectory(
-        "../include/InspectionRegion"
-        ${CMAKE_CURRENT_BINARY_DIR}/record_core_lib
-)

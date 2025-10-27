@@ -4,10 +4,10 @@
 
 #ifndef LEAFNODE_H
 #define LEAFNODE_H
+#include <nlohmann_json/json.hpp>
 #include "IQueryOperator.h"
 #include "QueryFileStructure.h"
 
-#include "json.hpp"
 
 /// Contains an instance of "OperatorCrop" based on the example JSON.
 /// This is the smallest item think of a binary tree used for evaluating 6 + 4
