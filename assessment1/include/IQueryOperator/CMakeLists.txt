@@ -23,7 +23,7 @@ target_include_directories(IQueryOperator
 
 target_link_libraries(IQueryOperator
         PRIVATE
-            InspectionGroup
+            InspectionRegion
             InspectionGroupFilter
 )
 

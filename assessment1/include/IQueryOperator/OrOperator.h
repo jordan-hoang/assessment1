@@ -1,7 +1,7 @@
 #ifndef OROPERATOR_H
 #define OROPERATOR_H
 
-#include "InspectionGroup.h" // ADDED: Definition of InspectionGroup and InspectionGroupCollection
+#include "InspectionRegion.h" // ADDED: Definition of InspectionGroup and InspectionGroupCollection
 #include "AndOperator.h" // Includes LogicalOperator base class
 #include <set>           // Required for efficient union operation (guaranteeing unique results)
 #include <algorithm>

@@ -15,7 +15,9 @@
 #include <iostream>
 #include <ostream>
 
-#include "InspectionGroup.h"
+#include "InspectionRegion.h"
+
+
 #include "IQueryOperator.h" /// THIS IS ONLY USED FOR SOLUTION 3.
 
 
@@ -43,7 +45,7 @@ struct Region {
     }
 
     // Overloaded alternate way.
-    bool contains(const InspectionGroup &myGroup) const {
+    bool contains(const InspectionRegion &myGroup) const {
         return contains(myGroup.get_x_coordinate(), myGroup.get_y_coordinate());
     }
 

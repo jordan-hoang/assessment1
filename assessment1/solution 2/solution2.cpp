@@ -7,7 +7,7 @@
 
 #include "QueryFileStructure.h"
 #include "json.hpp"
-#include "InspectionGroup.h"
+#include "InspectionRegion.h"
 #include "../include/InspectionGroupFilter/InspectionGroupFilter.h"
 #include "../include/Writers/ResultWriter.h"
 
@@ -119,7 +119,7 @@ json readJsonFile(const std::string& queryFilePath) {
  * @param list_records - List of records.
  * @return A filtered list of list_records.
  */
-std::vector<InspectionGroup> filterWithQueryStruct(const QueryFileStructure &query_struct, const std::vector<InspectionGroup> &list_records) {
+std::vector<InspectionRegion> filterWithQueryStruct(const QueryFileStructure &query_struct, const std::vector<InspectionRegion> &list_records) {
 
     /* For debugging */
     // QueryFileStructure::dumpQueryStruct(query_struct); // For debugging can remove later... not needed
@@ -130,11 +130,11 @@ std::vector<InspectionGroup> filterWithQueryStruct(const QueryFileStructure &que
     //     std::cout << a.toString() << std::endl;
     // }
 
-    std::vector<InspectionGroup> filtered_records = InspectionGroupFilter::applyFilter(query_struct, list_records);
+    std::vector<InspectionRegion> filtered_records = InspectionGroupFilter::applyFilter(query_struct, list_records);
 
     // More debugging dumps
     std::cout << "\nDumping out filtered records" << std::endl;
-    for(InspectionGroup a : filtered_records) {
+    for(InspectionRegion a : filtered_records) {
         std::cout << a.toString() << std::endl;
     }
 
@@ -148,14 +148,14 @@ std::vector<InspectionGroup> filterWithQueryStruct(const QueryFileStructure &que
  * @param row A pqxx::row object containing the fetched data, and turning it to a record.
  * @return A fully populated Record object.
  */
-InspectionGroup map_row_to_record(const pqxx::row& row) {
+InspectionRegion map_row_to_record(const pqxx::row& row) {
     // Fetch values and convert using the type-safe 'as<T>()' method
     auto x = row["coord_x"].as<double>();
     auto y = row["coord_y"].as<double>();
     auto category_val = row["category"].as<std::int64_t>();
     auto group_val = row["group_id"].as<std::int64_t>();
 
-    return InspectionGroup(x, y, category_val, group_val);
+    return InspectionRegion(x, y, category_val, group_val);
 }
 
 /**
@@ -163,7 +163,7 @@ InspectionGroup map_row_to_record(const pqxx::row& row) {
  * @param queryFilePath
  * @return vector of records from the inspection_region table.
  */
-std::vector<InspectionGroup> readRecordsFromDB() {
+std::vector<InspectionRegion> readRecordsFromDB() {
     std::string connection_string =
             "host=localhost "
             "port=5432 "      // Standard PostgreSQL port
@@ -171,7 +171,7 @@ std::vector<InspectionGroup> readRecordsFromDB() {
             "password=Moonshine4me " /// REPLACE WITH YOUR PASSWORD!!!
             "dbname=postgres ";      /// Generic default database.
 
-    std::vector<InspectionGroup> list_records;
+    std::vector<InspectionRegion> list_records;
 
     pqxx::connection myconnection(connection_string);
     pqxx::work W(myconnection);
@@ -188,8 +188,8 @@ std::vector<InspectionGroup> readRecordsFromDB() {
 void executeQuery(const std::string &path_to_json) {
         json parsed_json = readJsonFile(path_to_json);
         QueryFileStructure query_struct = extractQueryData(parsed_json); // Extract the json into that class we created to filter against.
-        std::vector<InspectionGroup> list_records = readRecordsFromDB(); // Fetch all the database results.
-        std::vector<InspectionGroup> filtered_records = filterWithQueryStruct(query_struct, list_records); // Now filter list_records
+        std::vector<InspectionRegion> list_records = readRecordsFromDB(); // Fetch all the database results.
+        std::vector<InspectionRegion> filtered_records = filterWithQueryStruct(query_struct, list_records); // Now filter list_records
         ResultWriter::writeToTextFile(filtered_records);
 }
 

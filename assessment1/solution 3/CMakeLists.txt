@@ -17,17 +17,17 @@ target_link_libraries(solution3
         PRIVATE
             ${Boost_LIBRARIES}
             libpqxx::pqxx
-            InspectionGroup
+            InspectionRegion
             InspectionGroupFilter
             ResultWriter
 )
 
 ### Add Record header and cpp file to it.
-set(INSPECTION_GROUP_SRC_DIR "../include/InspectionGroup")
-set(INSPECTION_GROUP_BIN_DIR "${CMAKE_CURRENT_BINARY_DIR}/InspectionGroup")
+set(INSPECTION_REGION_SRC_DIR "../include/InspectionRegion")
+set(INSPECTION_REGION_BIN_DIR "${CMAKE_CURRENT_BINARY_DIR}/InspectionRegion")
 add_subdirectory(
-        ${INSPECTION_GROUP_SRC_DIR} # 1st argument: Source path
-        ${INSPECTION_GROUP_BIN_DIR} # 2nd argument: Binary path
+        ${INSPECTION_REGION_SRC_DIR} # 1st argument: Source path
+        ${INSPECTION_REGION_BIN_DIR} # 2nd argument: Binary path
 )
 
 ## Add Inspection Group Filter

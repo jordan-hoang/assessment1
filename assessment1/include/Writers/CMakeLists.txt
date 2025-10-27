@@ -15,5 +15,5 @@ target_include_directories(ResultWriter PUBLIC
 # Keep implementation private.
 target_link_libraries(ResultWriter
         PRIVATE
-            InspectionGroup
+            InspectionRegion
 )
