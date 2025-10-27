@@ -30,6 +30,11 @@ public:
     double get_x_coordinate() const{return this->x_coordinate;};
     double get_y_coordinate() const{return this->y_coordinate;};
 
+    // For solution 3... for set It doesn't actually need to be sorted probably can change dtastruct
+    bool operator<(const InspectionGroup& other) const {
+        return this->get_group_id() < other.get_group_id();
+    }
+
     ~InspectionGroup() = default;
 };
 

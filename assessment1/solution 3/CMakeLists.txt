@@ -39,9 +39,16 @@ add_subdirectory(
 )
 
 ## Add ResultWriter...
-set(RESULT_WRITER_SRC_DIR "")
-set(RESULT_WRITER_BIN_DIR "${CMAKE_CURRENT_BINARY_DIR}/Writers")
 add_subdirectory(
         "../include/Writers"
         "${CMAKE_CURRENT_BINARY_DIR}/Writers"
 ) #### Normally you can just do add_subdirectory(../include/writers) if it was nested deeper but you can't so you need to specify a binpath as well.
+
+
+## Add IQueryOperator, this is a lib just for solution3. It has stuff in common with InspectionGroupFilter
+set(IQUERY_OPERATOR_SRC_DIR "../include/IQueryOperator")
+set(IQUERY_OPERATOR_BIN_DIR "${CMAKE_CURRENT_BINARY_DIR}/IQueryOperator")
+add_subdirectory(
+        ${IQUERY_OPERATOR_SRC_DIR}
+        ${IQUERY_OPERATOR_BIN_DIR}
+)

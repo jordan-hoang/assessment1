@@ -11,4 +11,10 @@ add_library(InspectionGroupFilter STATIC
 
 target_include_directories(InspectionGroupFilter PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_libraries(InspectionGroupFilter PRIVATE InspectionGroup)
+target_link_libraries(InspectionGroupFilter
+        PUBLIC
+            IQueryOperator
+        PRIVATE
+            InspectionGroup
+
+)

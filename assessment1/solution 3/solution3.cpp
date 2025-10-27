@@ -12,6 +12,7 @@
 #include "QueryFileStructure.h"
 #include "ResultWriter.h"
 #include "json.hpp"
+#include "QueryBuilder.h"
 
 
 using json = nlohmann::json;
@@ -70,42 +71,17 @@ QueryFileStructure extractQueryData(const json& my_json) {
         query_data.valid_region.p_max.y = vr_json.at("p_max").at("y").get<double>();
 
         // 2. Extract operator_crop Block (required)
-        const json& oc_json = my_json.at("query").at("operator_crop");
+        // FOR THIS WE NEED TO USE THE RECURSIVE STUFF WE JUST CREATED.
+        //const json& oc_json = my_json.at("query").at("operator_crop");
 
-        // 2a. Extract Required Crop Region
-        const json& region_json = oc_json.at("region");
-        query_data.operator_crop.region.p_min.x = region_json.at("p_min").at("x").get<double>();
-        query_data.operator_crop.region.p_min.y = region_json.at("p_min").at("y").get<double>();
-        query_data.operator_crop.region.p_max.x = region_json.at("p_max").at("x").get<double>();
-        query_data.operator_crop.region.p_max.y = region_json.at("p_max").at("y").get<double>();
+        auto root = QueryBuilder::parse_query_root(my_json.at("query"));
+        auto result = root->evaluate();  // executes all the ANDS and OR Operations.
 
 
-        // --- OPTIONAL FIELD EXTRACTION ---
-        // 3. Category (Optional std::int64_t)
-        if (oc_json.contains("category")) {
-            query_data.operator_crop.category.emplace(oc_json.at("category").get<std::int64_t>());
-        }
 
-        // 4. Proper (Optional bool)
-        if (oc_json.contains("proper")) {
-            query_data.operator_crop.proper.emplace(oc_json.at("proper").get<bool>());
-        }
 
-        // 5. one_of_groups (Optional array of std::int64_t) -> Converts to std::set also must be [] if just single element. I guess you can add support for single number if  you wanted.
-        if (oc_json.contains("one_of_groups")) {
-            const json& groups_array = oc_json.at("one_of_groups");
 
-            if (groups_array.is_array()) {
-                std::set<std::int64_t> group_set;
-                for (const auto& group_id_json : groups_array) {
-                    group_set.insert(group_id_json.get<std::int64_t>());
-                }
-                query_data.operator_crop.one_of_groups.emplace(std::move(group_set));
 
-            } else {
-                 std::cerr << "Warning: 'one_of_groups' field exists but is not a JSON array. Ignoring." << std::endl;
-            }
-        }
 
     } catch (const json::exception& e) {
         // Catch exceptions caused by missing REQUIRED fields (due to .at())
@@ -196,11 +172,12 @@ std::vector<InspectionGroup> filterWithQueryStruct(const QueryFileStructure &que
 void executeQuery(const std::string &path_to_json) {
     json parsed_json = readJsonFile(path_to_json);
     QueryFileStructure query_struct = extractQueryData(parsed_json); // Extract the json into that class we created to filter against.
-    std::vector<InspectionGroup> list_records = readRecordsFromDB(); // Fetch all the database results.
-    std::vector<InspectionGroup> filtered_records = filterWithQueryStruct(query_struct, list_records); // Now filter list_records
-    ResultWriter::writeToTextFile(filtered_records);
-}
 
+
+    //std::vector<InspectionGroup> list_records = readRecordsFromDB(); // Fetch all the database results.
+    //std::vector<InspectionGroup> filtered_records = filterWithQueryStruct(query_struct, list_records); // Now filter list_records
+    //ResultWriter::writeToTextFile(filtered_records);
+}
 
 
 
@@ -233,15 +210,15 @@ int main(int argc, char* argv[])
         executeQuery(path);
 
     } else if (vm.count("test")) {
-        std::string hardCodedFileName = "../../data/testjson/sample_json_1.json";
+        std::string hardCodedFileName = "../../data/testjson/json_and_test_one.json";
         executeQuery(hardCodedFileName);
     }
 
     else {
         // For faster testing
-        std::string hardCodedFileName = "../../data/testjson/sample_json_1.json";
+        std::string hardCodedFileName = "../../data/testjson/json_and_test_one.json";
         executeQuery(hardCodedFileName);
-        std::cout << "No arguments entered" << std::endl;
+        //std::cout << "No arguments entered" << std::endl;
     }
 
     return 0;
