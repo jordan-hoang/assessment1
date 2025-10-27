@@ -27,9 +27,6 @@ namespace po = boost::program_options;
  */
 json readJsonFile(const std::string& queryFilePath) {
 
-    std::filesystem::path cwd = std::filesystem::current_path();
-    std::cout << "Current working directory: " << cwd << '\n';
-
 
     std::ifstream i(queryFilePath);
     if (!i.is_open()) {
@@ -153,10 +150,10 @@ std::vector<InspectionRegion> filterWithQueryStruct(const QueryFileStructure &qu
     std::vector<InspectionRegion> filtered_records = InspectionGroupFilter::applyFilter(query_struct, list_records);
 
     // More debugging dumps
-    std::cout << "Dumping out filtered records to console...." << std::endl;
-    for(InspectionRegion a : filtered_records) {
-        std::cout << a.toString() << std::endl;
-    }
+    // std::cout << "Dumping out filtered records to console...." << std::endl;
+    // for(InspectionRegion a : filtered_records) {
+    //     std::cout << a.toString() << std::endl;
+    // }
 
     return filtered_records;
 }
@@ -168,7 +165,7 @@ void executeQuery(const std::string &path_to_json) {
     QueryFileStructure query_struct = extractQueryData(parsed_json); // Extract the json into that class we created to filter against.
 
     std::cout << std::endl;
-    QueryFileStructure::dumpQueryStruct(query_struct);
+    //QueryFileStructure::dumpQueryStruct(query_struct);  UNCOMMENT THIS FOR DUMP GOOD FOR TEST
     std::vector<InspectionRegion> list_records = readRecordsFromDB(); // Fetch all the database results.
     std::vector<InspectionRegion> filtered_records = filterWithQueryStruct(query_struct, list_records); // Now filter list_records
     ResultWriter::writeToTextFile(filtered_records);
@@ -211,12 +208,10 @@ int main(int argc, char* argv[])
     }
 
     else {
-        // For faster testing
+        std::cout << "No arguments entered... using relative path for faster testing.";
         //std::string hardCodedFileName = "../../data/testjson/json_and_test_three.json";
         std::string hardCodedFileName = "../../data/testjson/json_or_test.json";
-
         executeQuery(hardCodedFileName);
-        std::cout << "No arguments entered" << std::endl;
     }
 
     return 0;
