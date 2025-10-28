@@ -105,7 +105,7 @@ int createDB(const std::string& connection_string) {
         // 2. Establish the connection
         pqxx::connection C(connection_string);
         pqxx::work W(C);
-        std::ifstream file("assessment1/schema.pgsql");
+        std::ifstream file("schema.pgsql");
 
         if (!file.is_open()) {
             std::cerr << "Could not open schema.pgsql\n";
@@ -201,7 +201,8 @@ int writeToDB(const std::vector<InspectionRegion>& records) {
 
 
 
-int main(int argc, char* argv[])
+
+int runSolution1(int argc, char* argv[])
 {
     // "../../data/0" works quite well.;
     po::options_description desc("Allowed options");
@@ -237,8 +238,17 @@ int main(int argc, char* argv[])
         writeToDB(myRecord);
     }
     else {
-        std::cout << "No arguments entered" << std::endl;
+        std::cout << "No arguments entered" << std::endl; // "../../data/0"
     }
 
+    return 0;
+}
+
+
+
+
+int main(int argc, char* argv[])
+{
+    runSolution1(argc, argv);
     return 0;
 }
