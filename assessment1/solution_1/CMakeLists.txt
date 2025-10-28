@@ -19,10 +19,3 @@ target_link_libraries(solution1
             libpqxx::pqxx
             InspectionRegion
 )
-
-# Copy it over schema files to read from for cmakebuild_debug.
-configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/../schema.pgsql
-        ${CMAKE_BINARY_DIR}/assessment1/schema.pgsql
-        COPYONLY)
-
