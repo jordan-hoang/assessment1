@@ -3,10 +3,10 @@
 #include <cstdint>
 #include <boost/program_options.hpp>
 #include <pqxx/pqxx>
+#include <nlohmann_json/json.hpp>
 
 
 #include "QueryFileStructure.h"
-#include "json.hpp"
 #include "InspectionRegion.h"
 #include "../include/InspectionGroupFilter/InspectionGroupFilter.h"
 #include "../include/Writers/ResultWriter.h"

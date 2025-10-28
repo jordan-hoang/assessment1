@@ -17,11 +17,13 @@ add_subdirectory(include/InspectionRegion)
 add_subdirectory(include/InspectionGroupFilter)
 add_subdirectory(include/IQueryOperator)
 add_subdirectory(include/Writers)
-add_library(ExternalHeaders INTERFACE
-        tests/solution_1/test_solution1.cpp)
+
+# External headers (header-only)
+add_library(ExternalHeaders INTERFACE)
 target_include_directories(ExternalHeaders INTERFACE
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/external/nlohmann_json
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/external/
 )
+
 
 
 add_subdirectory("solution_1")
