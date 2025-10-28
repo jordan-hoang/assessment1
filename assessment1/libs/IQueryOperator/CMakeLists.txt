@@ -6,24 +6,19 @@ project(IQueryOperator)
 set(CMAKE_CXX_STANDARD 17)
 
 add_library(IQueryOperator
-        IQueryOperator.h
-        LeafNode.cpp
-        LeafNode.h
-        QueryBuilder.cpp
-        QueryBuilder.h
-        OrOperator.h
-        AndOperator.h
+        src/LeafNode.cpp
+        src/QueryBuilder.cpp
 )
 
 target_include_directories(IQueryOperator
         PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}
-        "${CMAKE_CURRENT_SOURCE_DIR}/../external"
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 target_link_libraries(IQueryOperator
         PRIVATE
             InspectionRegion
             InspectionGroupFilter
+            ExternalHeaders
 )
 

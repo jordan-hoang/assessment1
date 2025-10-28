@@ -7,11 +7,11 @@
 #include <iostream>
 #include <pqxx/pqxx>
 #include <boost/program_options.hpp>
+#include <nlohmann_json/json.hpp>
 
 #include "InspectionGroupFilter.h"
 #include "QueryFileStructure.h"
 #include "ResultWriter.h"
-#include "json.hpp"
 #include "LeafNode.h"
 #include "QueryBuilder.h"
 

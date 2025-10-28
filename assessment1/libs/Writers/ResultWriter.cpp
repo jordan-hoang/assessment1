@@ -5,6 +5,8 @@
 #include <iomanip>
 #include <iostream>
 
+#include "InspectionRegion.h"
+
 // ... other necessary includes
 
 namespace ResultWriter {
