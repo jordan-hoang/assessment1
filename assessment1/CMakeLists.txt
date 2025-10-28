@@ -13,15 +13,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
 # Sub Directories for libraries
-add_subdirectory(include/InspectionRegion)
-add_subdirectory(include/InspectionGroupFilter)
-add_subdirectory(include/IQueryOperator)
-add_subdirectory(include/Writers)
+add_subdirectory(libs/InspectionRegion)
+add_subdirectory(libs/InspectionGroupFilter)
+add_subdirectory(libs/IQueryOperator)
+add_subdirectory(libs/Writers)
 
 # External headers (header-only)
 add_library(ExternalHeaders INTERFACE)
 target_include_directories(ExternalHeaders INTERFACE
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/external/
+        ${CMAKE_CURRENT_SOURCE_DIR}/libs/external/
 )
 
 

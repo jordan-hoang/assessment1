@@ -8,8 +8,8 @@
 
 #include "QueryFileStructure.h"
 #include "InspectionRegion.h"
-#include "../include/InspectionGroupFilter/InspectionGroupFilter.h"
-#include "../include/Writers/ResultWriter.h"
+#include "InspectionGroupFilter.h"
+#include "ResultWriter.h"
 
 using json = nlohmann::json;
 namespace po = boost::program_options;
