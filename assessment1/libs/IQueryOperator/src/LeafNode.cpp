@@ -3,7 +3,6 @@
 //
 
 #include "LeafNode.h"
-
 #include <utility>
 
 /**

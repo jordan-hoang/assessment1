@@ -1,29 +1,8 @@
 #ifndef ANDOPERATOR_H
 #define ANDOPERATOR_H
 
-#include <vector>
 #include <memory>
-#include <iostream>
 #include "IQueryOperator.h"
-#include "QueryFileStructure.h"
-#include "LeafNode.h"
-
-/**
- * @brief Base class for Composite operators (AND, OR).
- * Manages the collection of child IQueryOperator nodes.
- */
-class LogicalOperator : public IQueryOperator {
-protected:
-    // Stores the list of child nodes. Think a tree that can have as many children as you want.
-    std::vector<std::unique_ptr<IQueryOperator>> children_;
-public:
-    // Allows the QueryBuilder to add parsed child nodes.
-    void add_child(std::unique_ptr<IQueryOperator> op) {
-        children_.push_back(std::move(op));
-    }
-
-    ~LogicalOperator() override = default;
-};
 
 
 /**

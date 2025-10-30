@@ -1,4 +1,5 @@
 #include "AndOperator.h"
+#include <LeafNode.h>
 
 /**
  * It will be a leafNdoe because if it a leafNode ISN"T RETURNED THAN EVALUATE WAS CALLED ON AN OR
@@ -48,7 +49,6 @@ std::unique_ptr<IQueryOperator> AndOperator::executeAND(std::unique_ptr<IQueryOp
     crop_query.one_of_groups = combined;
     return std::make_unique<LeafNode>(crop_query);
 }
-
 
 
 std::unique_ptr<IQueryOperator> AndOperator::evaluate() const {
