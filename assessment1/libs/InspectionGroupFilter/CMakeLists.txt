@@ -3,20 +3,18 @@ project(InspectionGroupFilter)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_library(InspectionGroupFilter STATIC
-        InspectionGroupFilter.cpp
-        InspectionGroupFilter.h
-        QueryFileStructure.h
+add_library(InspectionGroupFilter
+        src/InspectionGroupFilter.cpp
 )
 
 target_include_directories(InspectionGroupFilter
         PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 target_link_libraries(InspectionGroupFilter
         PUBLIC
-        IQueryOperator
+            IQueryOperator
         PRIVATE
-        InspectionRegion
+            InspectionRegion
 )
