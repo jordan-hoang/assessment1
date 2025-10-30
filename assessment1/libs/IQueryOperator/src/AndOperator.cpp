@@ -1,5 +1,6 @@
 #include "AndOperator.h"
 #include <LeafNode.h>
+#include <iostream>
 
 /**
  * It will be a leafNdoe because if it a leafNode ISN"T RETURNED THAN EVALUATE WAS CALLED ON AN OR

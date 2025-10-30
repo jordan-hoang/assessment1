@@ -1,5 +1,6 @@
 #include "OrOperator.h" // ADDED: Definition of InspectionGroup and InspectionGroupCollection
 #include "LeafNode.h"
+#include <iostream>
 
 /**
  * @brief Implements the logical OR operation, inheriting the children list
