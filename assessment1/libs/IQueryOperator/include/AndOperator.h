@@ -6,6 +6,7 @@
 #include <iostream>
 #include "IQueryOperator.h"
 #include "QueryFileStructure.h"
+#include "LeafNode.h"
 
 /**
  * @brief Base class for Composite operators (AND, OR).

@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD 17)
 add_library(IQueryOperator
         src/LeafNode.cpp
         src/QueryBuilder.cpp
+        src/OrOperator.cpp
 )
 
 target_include_directories(IQueryOperator
