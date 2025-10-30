@@ -9,6 +9,7 @@ add_library(IQueryOperator
         src/LeafNode.cpp
         src/QueryBuilder.cpp
         src/OrOperator.cpp
+        src/AndOperator.cpp
 )
 
 target_include_directories(IQueryOperator
