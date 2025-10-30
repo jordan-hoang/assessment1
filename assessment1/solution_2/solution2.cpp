@@ -15,7 +15,8 @@ using json = nlohmann::json;
 namespace po = boost::program_options;
 
 /**
- * Extracts all necessary query parameters from a parsed JSON object
+ * Extracts all necessary query parameters from a parsed JSON object.... Would this work with solution #2?
+ * Maybe we can use solutoin 3's variant.
  * into a QueryFileStructure object.
  * * @param my_json The parsed nlohmann::json object (root of the query file).
  * @return A fully populated QueryFileStructure object.
@@ -111,8 +112,6 @@ json readJsonFile(const std::string& queryFilePath) {
 
 
 
-
-
 /**
  *
  * @param query_struct - The query struct you are going to filter list_records by.
@@ -143,52 +142,18 @@ std::vector<InspectionRegion> filterWithQueryStruct(const QueryFileStructure &qu
 }
 
 
-
-/**
- * @param row A pqxx::row object containing the fetched data, and turning it to a record.
- * @return A fully populated Record object.
- */
-InspectionRegion map_row_to_record(const pqxx::row& row) {
-    // Fetch values and convert using the type-safe 'as<T>()' method
-    auto x = row["coord_x"].as<double>();
-    auto y = row["coord_y"].as<double>();
-    auto category_val = row["category"].as<std::int64_t>();
-    auto group_val = row["group_id"].as<std::int64_t>();
-
-    return InspectionRegion(x, y, category_val, group_val);
-}
-
-/**
- *
- * @param queryFilePath
- * @return vector of records from the inspection_region table.
- */
-std::vector<InspectionRegion> readRecordsFromDB() {
-    std::string connection_string =
-            "host=localhost "
-            "port=5432 "      // Standard PostgreSQL port
-            "user=postgres "
-            "password=Moonshine4me " /// REPLACE WITH YOUR PASSWORD!!!
-            "dbname=postgres ";      /// Generic default database.
-
-    std::vector<InspectionRegion> list_records;
-
-    pqxx::connection myconnection(connection_string);
-    pqxx::work W(myconnection);
-
-    pqxx::result inspection_region_result = W.exec("SELECT * From inspection_region;");
-    for (const pqxx::row& row : inspection_region_result) {
-        list_records.push_back(map_row_to_record(row));
-    }
-
-    return list_records;
-}
-
-
 void executeQuery(const std::string &path_to_json) {
+
+    std::string conn_string =
+        "host=localhost "
+        "port=5432 "      // Standard PostgreSQL port
+        "user=postgres "
+        "password=Moonshine4me " /// REPLACE WITH YOUR PASSWORD!!!
+        "dbname=postgres ";      /// Generic default database.
+
         json parsed_json = readJsonFile(path_to_json);
         QueryFileStructure query_struct = extractQueryData(parsed_json); // Extract the json into that class we created to filter against.
-        std::vector<InspectionRegion> list_records = readRecordsFromDB(); // Fetch all the database results.
+        std::vector<InspectionRegion> list_records = InspectionRegion::readRecordsFromDB(conn_string); // Fetch all the database results.
         std::vector<InspectionRegion> filtered_records = filterWithQueryStruct(query_struct, list_records); // Now filter list_records
         ResultWriter::writeToTextFile(filtered_records);
 }

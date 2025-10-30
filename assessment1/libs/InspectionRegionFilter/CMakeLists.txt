@@ -6,11 +6,12 @@ set(CMAKE_CXX_STANDARD 17)
 add_library(InspectionGroupFilter
         src/InspectionGroupFilter.cpp
         src/QueryFileStructure.cpp
+        src/QueryFileJsonParser.cpp
 )
 
 target_include_directories(InspectionGroupFilter
         PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+            ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 target_link_libraries(InspectionGroupFilter
@@ -18,4 +19,5 @@ target_link_libraries(InspectionGroupFilter
             IQueryOperator
         PRIVATE
             InspectionRegion
+            ExternalHeaders
 )
