@@ -6,7 +6,7 @@ if(GTest_FOUND)
 
     # Add subdirectories for each solution's tests
     add_subdirectory(solution_1)
-    #add_subdirectory(solution2)
+    add_subdirectory(solution_2)
     #add_subdirectory(solution3)
 
 else()

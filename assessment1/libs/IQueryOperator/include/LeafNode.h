@@ -25,12 +25,14 @@ class LeafNode : public IQueryOperator {
         explicit LeafNode(CropQueryParameters p);
 
         // DUMMY CONSTRUCTOR TO MAKE COMPILER HAPPY DO NOT USE / DELETE LATER NOT NECESSARY.
-        explicit LeafNode();
+        explicit LeafNode() {
+            throw std::logic_error("Dummy LeafNode constructor called — shouldn’t happen!");
+        };
 
-        std::unique_ptr<IQueryOperator> evaluate() const override;
+        std::unique_ptr<LeafNode> evaluate() const override;
 
         // Getter for retrieving cropParams
-        const CropQueryParameters& getCropParams() const;
+        CropQueryParameters getCropParams() const;
 };
 
 
