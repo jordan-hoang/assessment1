@@ -19,12 +19,14 @@ target_include_directories(solution2_core
 )
 
 target_link_libraries(solution2_core
+        PUBLIC
+            InspectionGroupFilter
+            ResultWriter
         PRIVATE
             ${Boost_LIBRARIES}
             libpqxx::pqxx
             InspectionRegion
             InspectionGroupFilter
-            ResultWriter
             ExternalHeaders
 )
 

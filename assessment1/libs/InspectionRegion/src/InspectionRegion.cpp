@@ -51,12 +51,18 @@ InspectionRegion InspectionRegion::map_row_to_record(const pqxx::row& row) {
 std::vector<InspectionRegion> InspectionRegion::readRecordsFromDB(const std::string& conn_string) {
 
     std::vector<InspectionRegion> list_records;
-    pqxx::connection myconnection(conn_string);
-    pqxx::work W(myconnection);
+    try
+    {
+        pqxx::connection myconnection(conn_string);
+        pqxx::work W(myconnection);
 
-    pqxx::result inspection_region_result = W.exec("SELECT * From inspection_region;");
-    for (const pqxx::row& row : inspection_region_result) {
-        list_records.push_back(InspectionRegion::map_row_to_record(row));
+        pqxx::result inspection_region_result = W.exec("SELECT * From inspection_region;");
+        for (const pqxx::row& row : inspection_region_result) {
+            list_records.push_back(InspectionRegion::map_row_to_record(row));
+        }
+    } catch (std::exception& e) {
+        std::cerr << "Unknown error reading inspection_region" << std::endl;\
+        throw;
     }
 
     return list_records;

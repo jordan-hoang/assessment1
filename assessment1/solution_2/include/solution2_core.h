@@ -6,11 +6,12 @@
 #define SOLUTION2_CORE_H
 
 
-#include <QueryFileJsonParser.h>
+#include <QueryFileStructure.h>
 #include <boost/program_options.hpp>
+#include <nlohmann_json/json.hpp>
+
 using json = nlohmann::json;
 namespace po = boost::program_options;
-
 
 namespace solution2_core {
 
@@ -39,7 +40,7 @@ namespace solution2_core {
     * @return A filtered list of list_records.
     */
     std::vector<InspectionRegion> filterWithQueryStruct(const QueryFileStructure &query_struct,
-       const std::vector<InspectionRegion> &list_records, bool debug = true);
+       const std::vector<InspectionRegion> &list_records, bool debug = false);
 
 };
 

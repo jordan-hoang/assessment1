@@ -75,11 +75,11 @@ void CropQueryParameters::dumpCropQueryParameters(const CropQueryParameters &que
  * @param query
  */
 void QueryFileStructure::dumpQueryStruct(const QueryFileStructure &query) {
-    std::cout << "Valid_Region Min x,y: " << query.valid_region.p_min.x << " " << query.valid_region.p_min.y << std::endl;
-    std::cout << "Valid_Region Max x,y: " << query.valid_region.p_max.x << " " << query.valid_region.p_max.y << std::endl;
+    std::cout << "Valid_Region Min x,y: " << query.valid_region.p_min.x << ", " << query.valid_region.p_min.y << std::endl;
+    std::cout << "Valid_Region Max x,y: " << query.valid_region.p_max.x << ", " << query.valid_region.p_max.y << std::endl;
 
-    std::cout << "Valid_Region_operator_crop Min x,y: " << query.operator_crop.region.p_min.x << " " << query.valid_region.p_min.y << std::endl;
-    std::cout << "Valid_Region_operator_crop Max x,y: " << query.operator_crop.region.p_max.x << " " << query.valid_region.p_max.y << std::endl;
+    std::cout << "Valid_Region_operator_crop Min x,y: " << query.operator_crop.region.p_min.x << ", " << query.operator_crop.region.p_min.y  << std::endl;
+    std::cout << "Valid_Region_operator_crop Max x,y: " << query.operator_crop.region.p_max.x << ", " << query.operator_crop.region.p_max.y << std::endl;
 
     CropQueryParameters::dumpCropQueryParameters(query.operator_crop);
 }

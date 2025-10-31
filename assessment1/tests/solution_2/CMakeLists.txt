@@ -11,7 +11,7 @@ target_link_libraries(test_solution2
             solution2_core
 )
 
-add_test(NAME solution2_data_0 COMMAND test_solution2 "../data/0")
+add_test(NAME solution2_data_0 COMMAND test_solution2 "${CMAKE_SOURCE_DIR}/data/testjson/sample_json_1.json")
 
 # Etc.... can add more command line arguments for testing  here just give diff name for each one.
 # add_test(NAME solution2_data_1 COMMAND test_solution2 "../data/1")

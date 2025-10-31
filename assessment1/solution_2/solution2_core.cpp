@@ -3,14 +3,13 @@
 //
 
 #include "include/solution2_core.h"
-#include <pqxx/pqxx>
 #include <nlohmann_json/json.hpp>
 #include <iostream>
 #include <cstdint>
+#include <InspectionGroupFilter.h>
 
 #include "QueryFileStructure.h"
 #include "InspectionRegion.h"
-#include "InspectionGroupFilter.h"
 #include "ResultFileIO.h"
 
 
@@ -130,9 +129,7 @@ QueryFileStructure solution2_core::extractQueryData(const json& my_json) {
 
 
 std::vector<InspectionRegion> solution2_core::filterWithQueryStruct(const QueryFileStructure &query_struct,
-    const std::vector<InspectionRegion> &list_records,
-    bool debug
-    ) {
+   const std::vector<InspectionRegion> &list_records, bool debug) {
     /* For debugging */
     if(debug) {
         QueryFileStructure::dumpQueryStruct(query_struct); // For debugging can remove later... not needed
@@ -154,7 +151,9 @@ std::vector<InspectionRegion> solution2_core::filterWithQueryStruct(const QueryF
     }
 
     return filtered_records;
+
 }
+
 
 
 
