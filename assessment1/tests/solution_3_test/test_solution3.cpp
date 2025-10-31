@@ -30,10 +30,10 @@ TEST(SOLUTION_3_TESTING, TEST_AND) {
     QueryFileStructure query_struct = QueryFileJsonParser::from_json(parsed_json);
 
 
-    EXPECT_EQ(query_struct.valid_region[0].p_min.x, 0) << "Invalid p_min, for file " << filePath << "\n";
-    EXPECT_EQ(query_struct.valid_region[0].p_min.y, 0) << "Invalid p_min, for file " << filePath << "\n";
-    EXPECT_EQ(query_struct.valid_region[0].p_max.x, 1000) << "Invalid p_max, for file " << filePath << "\n";
-    EXPECT_EQ(query_struct.valid_region[0].p_max.y, 1000) << "Invalid p_max, for file " << filePath << "\n";
+    EXPECT_EQ(query_struct.valid_region.p_min.x, 0) << "Invalid p_min, for file " << filePath << "\n";
+    EXPECT_EQ(query_struct.valid_region.p_min.y, 0) << "Invalid p_min, for file " << filePath << "\n";
+    EXPECT_EQ(query_struct.valid_region.p_max.x, 1000) << "Invalid p_max, for file " << filePath << "\n";
+    EXPECT_EQ(query_struct.valid_region.p_max.y, 1000) << "Invalid p_max, for file " << filePath << "\n";
 
     EXPECT_EQ(query_struct.operator_crop.region.p_min.x, 0) << "Invalid operator_crop.p_min.x, for file " << filePath << "\n";
     EXPECT_EQ(query_struct.operator_crop.region.p_min.y, 0) << "Invalid operator_crop.p_min.y, for file " << filePath << "\n";

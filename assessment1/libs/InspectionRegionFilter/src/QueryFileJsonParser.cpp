@@ -22,13 +22,10 @@ QueryFileStructure QueryFileJsonParser::from_json(const nlohmann::json& my_json)
         const nlohmann::json& vr_json = my_json.at("valid_region");
 
         Region my_region;
-        my_region.p_min.x = vr_json.at("p_min").at("x").get<double>();
-        my_region.p_min.y = vr_json.at("p_min").at("y").get<double>();
-        my_region.p_max.x = vr_json.at("p_max").at("x").get<double>();
-        my_region.p_max.y = vr_json.at("p_max").at("y").get<double>();
-
-        query_data.valid_region.push_back(my_region);
-
+        query_data.valid_region.p_min.x = vr_json.at("p_min").at("x").get<double>();
+        query_data.valid_region.p_min.y = vr_json.at("p_min").at("y").get<double>();
+        query_data.valid_region.p_max.x = vr_json.at("p_max").at("x").get<double>();
+        query_data.valid_region.p_max.y = vr_json.at("p_max").at("y").get<double>();
 
 
         // 2.) Extract operator_crop Block
