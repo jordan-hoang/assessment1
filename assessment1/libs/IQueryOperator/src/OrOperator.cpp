@@ -8,11 +8,11 @@
  * And all of its children when evaaluated will be a leafNode.
  *
  */
-std::unique_ptr<IQueryOperator> OrOperator::executeOR(std::unique_ptr<IQueryOperator> accumulator,
-                                               std::unique_ptr<IQueryOperator> nodeToCombine) const{
+std::unique_ptr<LeafNode> OrOperator::executeOR(std::unique_ptr<LeafNode> accumulator,
+                                               std::unique_ptr<LeafNode> nodeToCombine) const{
 
-    auto leafA = dynamic_cast<LeafNode*>(accumulator.get());
-    auto leafB = dynamic_cast<LeafNode*>(nodeToCombine.get());
+    auto leafA = std::move(accumulator);
+    auto leafB = std::move(nodeToCombine);
 
     // We need to combine these leafNodes by creating a new one.
     CropQueryParameters crop_query;
@@ -62,7 +62,7 @@ std::unique_ptr<IQueryOperator> OrOperator::executeOR(std::unique_ptr<IQueryOper
  * Each child is evaluated against the full input data, and the results
  * are merged into a single unique collection.
  */
-std::unique_ptr<IQueryOperator> OrOperator::evaluate() const {
+std::unique_ptr<LeafNode> OrOperator::evaluate() const {
     if (children_.empty()) {
         std::cout << "OR Operator called with no children. This is unexpected terminating program..." << std::endl;
         exit(-1);

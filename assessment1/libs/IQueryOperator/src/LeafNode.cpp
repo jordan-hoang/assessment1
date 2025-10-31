@@ -58,7 +58,7 @@ LeafNode::LeafNode(CropQueryParameters p) {
 }
 
 // Careful this destroys the original "node"
-std::unique_ptr<IQueryOperator> LeafNode::evaluate() const {
+std::unique_ptr<LeafNode> LeafNode::evaluate() const {
     return std::make_unique<LeafNode>(this->cropParams);
 }
 

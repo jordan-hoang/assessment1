@@ -11,12 +11,12 @@
  */
 class OrOperator : public LogicalOperator {
 private:
-    std::unique_ptr<IQueryOperator> executeOR(std::unique_ptr<IQueryOperator> accumulator,
-                                               std::unique_ptr<IQueryOperator> nodeToCombine) const;
+    std::unique_ptr<LeafNode> executeOR(std::unique_ptr<LeafNode> accumulator,
+                                               std::unique_ptr<LeafNode> nodeToCombine) const;
 
 public:
     OrOperator() = default;
-    std::unique_ptr<IQueryOperator> evaluate() const override;
+    std::unique_ptr<LeafNode> evaluate() const override;
 };
 
 #endif //OROPERATOR_H

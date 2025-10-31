@@ -27,12 +27,9 @@ QueryFileStructure QueryFileJsonParser::from_json(const nlohmann::json& my_json)
 
         // 2.) Extract operator_crop Block
         // FOR THIS WE NEED TO USE THE RECURSIVE Stuff / Abstract Syntax Tree.
-        // const json& oc_json = my_json.at("query").at("operator_crop");
-        auto root = QueryBuilder::parse_query_root(my_json.at("query")); /// In this sitaution we get a single LeafNdoe.
-        auto result = root->evaluate();  // executes all the ANDS and OR Operations.
-
-        auto leafA = dynamic_cast<LeafNode*>(result.get());
-        query_data.operator_crop = leafA->getCropParams();
+        auto root = QueryBuilder::parse_query_root(my_json.at("query"));
+        auto result = root->evaluate();  // executes all the ANDS and OR Operations, will result in a single LeafNode always.
+        query_data.operator_crop = result->getCropParams();
 
 
     } catch (const nlohmann::json::exception& e) {

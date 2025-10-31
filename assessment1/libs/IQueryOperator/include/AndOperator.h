@@ -1,6 +1,7 @@
 #ifndef ANDOPERATOR_H
 #define ANDOPERATOR_H
 
+#include <LeafNode.h>
 #include <memory>
 #include "IQueryOperator.h"
 
@@ -19,12 +20,12 @@ class AndOperator : public LogicalOperator {
          * @param nodeToCombine This is a "leafNode  or children you will combine with."
          * @return The combined nodes.
          */
-        std::unique_ptr<IQueryOperator> executeAND(std::unique_ptr<IQueryOperator> accumulator,
-                                                   std::unique_ptr<IQueryOperator> nodeToCombine) const;
+        std::unique_ptr<LeafNode> executeAND(std::unique_ptr<LeafNode> accumulator,
+                                                   std::unique_ptr<LeafNode> nodeToCombine) const;
 
     public:
         AndOperator() = default;
-        std::unique_ptr<IQueryOperator> evaluate() const override;
+        std::unique_ptr<LeafNode> evaluate() const override;
 
 };
 

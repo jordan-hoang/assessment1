@@ -9,12 +9,11 @@
  * @param nodeToCombine This is a "leafNode  or children you will combine with."
  * @return The combined nodes.
  */
-std::unique_ptr<IQueryOperator> AndOperator::executeAND(std::unique_ptr<IQueryOperator> accumulator,
-                                           std::unique_ptr<IQueryOperator> nodeToCombine) const{
+std::unique_ptr<LeafNode> AndOperator::executeAND(std::unique_ptr<LeafNode> accumulator,
+                                           std::unique_ptr<LeafNode> nodeToCombine) const{
 
-
-    auto leafA = dynamic_cast<LeafNode*>(accumulator.get());
-    auto leafB = dynamic_cast<LeafNode*>(nodeToCombine.get());
+    auto leafA = std::move(accumulator);
+    auto leafB = std::move(nodeToCombine);
 
     // We need to combine these leafNodes by creating a new one.
     CropQueryParameters crop_query;
@@ -52,7 +51,7 @@ std::unique_ptr<IQueryOperator> AndOperator::executeAND(std::unique_ptr<IQueryOp
 }
 
 
-std::unique_ptr<IQueryOperator> AndOperator::evaluate() const {
+std::unique_ptr<LeafNode> AndOperator::evaluate() const {
     if (children_.empty()) {
         std::cout << "OR Operator called with no children. This is unexpected terminating program..." << std::endl;
         exit(-1);

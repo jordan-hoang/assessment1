@@ -29,7 +29,7 @@ class LeafNode : public IQueryOperator {
             throw std::logic_error("Dummy LeafNode constructor called — shouldn’t happen!");
         };
 
-        std::unique_ptr<IQueryOperator> evaluate() const override;
+        std::unique_ptr<LeafNode> evaluate() const override;
 
         // Getter for retrieving cropParams
         CropQueryParameters getCropParams() const;
