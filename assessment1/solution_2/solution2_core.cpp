@@ -129,6 +129,35 @@ QueryFileStructure solution2_core::extractQueryData(const json& my_json) {
 }
 
 
+std::vector<InspectionRegion> solution2_core::filterWithQueryStruct(const QueryFileStructure &query_struct,
+    const std::vector<InspectionRegion> &list_records,
+    bool debug
+    ) {
+    /* For debugging */
+    if(debug) {
+        QueryFileStructure::dumpQueryStruct(query_struct); // For debugging can remove later... not needed
+        std::cout << std::endl;
+        std::cout << std::endl;
+        for(InspectionRegion a : list_records) {
+            std::cout << a.toString() << std::endl;
+        }
+    }
+
+    std::vector<InspectionRegion> filtered_records = InspectionGroupFilter::applyFilter(query_struct, list_records);
+
+    // More debugging dumps
+    if(debug) {
+        std::cout << "\nDumping out filtered records" << std::endl;
+        for(InspectionRegion a : filtered_records) {
+            std::cout << a.toString() << std::endl;
+        }
+    }
+
+    return filtered_records;
+}
+
+
+
 // Generic method that takes in the main and "executes the main loop" actually maybe not even needed.
 void solution2_core::executeQuery(const std::string &path_to_json) {
 

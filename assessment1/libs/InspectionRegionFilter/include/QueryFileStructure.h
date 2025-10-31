@@ -11,9 +11,7 @@
 #include <set>
 #include <optional>
 #include <cstdint>
-
 #include "InspectionRegion.h"
-#include "IQueryOperator.h" /// THIS IS ONLY USED FOR SOLUTION 3.
 
 /**
  * @brief Represents a single (x, y) coordinate pair. Used for p_min and p_max.

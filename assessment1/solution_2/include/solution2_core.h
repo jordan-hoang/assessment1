@@ -39,7 +39,7 @@ namespace solution2_core {
     * @return A filtered list of list_records.
     */
     std::vector<InspectionRegion> filterWithQueryStruct(const QueryFileStructure &query_struct,
-       const std::vector<InspectionRegion> &list_records);
+       const std::vector<InspectionRegion> &list_records, bool debug = true);
 
 };
 

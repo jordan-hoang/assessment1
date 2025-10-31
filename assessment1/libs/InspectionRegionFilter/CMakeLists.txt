@@ -17,7 +17,6 @@ target_include_directories(InspectionGroupFilter
 target_link_libraries(InspectionGroupFilter
         PUBLIC
             IQueryOperator
-        PRIVATE
             InspectionRegion
             ExternalHeaders
 )

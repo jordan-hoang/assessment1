@@ -84,7 +84,7 @@ void executeQuery(const std::string &path_to_json) {
     //QueryFileStructure::dumpQueryStruct(query_struct);  UNCOMMENT THIS FOR DUMP GOOD FOR TEST
     std::vector<InspectionRegion> list_records = InspectionRegion::readRecordsFromDB(conn_string); // Fetch all the database results.
     std::vector<InspectionRegion> filtered_records = filterWithQueryStruct(query_struct, list_records); // Now filter list_records
-    ResultWriter::writeToTextFile(filtered_records);
+    ResultFileIO::writeToTextFile(filtered_records);
 
 }
 
