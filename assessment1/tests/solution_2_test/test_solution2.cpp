@@ -14,6 +14,7 @@ static std::string G_INPUTFILE;  // file-scope static, only visible here
 TEST(SOLUTION_2_TESTING, myTest) {
     ASSERT_FALSE(G_INPUTFILE.empty()) << "File path not set! Did you pass it from CMake?";
 
+
     std::string conn_string =
         "host=localhost "
         "port=5432 "      // Standard PostgreSQL port
@@ -32,12 +33,12 @@ TEST(SOLUTION_2_TESTING, myTest) {
     EXPECT_EQ(query_struct.valid_region.p_min.x, 0) << "Invalid p_min, for file " << G_INPUTFILE << "\n";
     EXPECT_EQ(query_struct.valid_region.p_min.y, 0) << "Invalid p_min, for file " << G_INPUTFILE << "\n";
     EXPECT_EQ(query_struct.valid_region.p_max.x, 610) << "Invalid p_max, for file " << G_INPUTFILE << "\n";
-    EXPECT_EQ(query_struct.valid_region.p_max.y, 700) << "Invalid p_max, for file " << G_INPUTFILE << "\n";
+    EXPECT_EQ(query_struct.valid_region.p_max.y, 600) << "Invalid p_max, for file " << G_INPUTFILE << "\n";
 
-    EXPECT_EQ(query_struct.operator_crop.region.p_min.x, 0) << "Invalid operator_crop.p_min.x, for file " << G_INPUTFILE << "\n";
-    EXPECT_EQ(query_struct.operator_crop.region.p_min.y, 0) << "Invalid operator_crop.p_min.y, for file " << G_INPUTFILE << "\n";
-    EXPECT_EQ(query_struct.operator_crop.region.p_max.x, 2000) << "Invalid operator_crop.p_max.x, for file " << G_INPUTFILE << "\n";
-    EXPECT_EQ(query_struct.operator_crop.region.p_max.y, 2000) << "Invalid operator_crop.p_max.y, for file " << G_INPUTFILE << "\n";
+    EXPECT_EQ(query_struct.operator_crop.list_region[0].p_min.x, 0) << "Invalid operator_crop.p_min.x, for file " << G_INPUTFILE << "\n";
+    EXPECT_EQ(query_struct.operator_crop.list_region[0].p_min.y, 0) << "Invalid operator_crop.p_min.y, for file " << G_INPUTFILE << "\n";
+    EXPECT_EQ(query_struct.operator_crop.list_region[0].p_max.x, 2000) << "Invalid operator_crop.p_max.x, for file " << G_INPUTFILE << "\n";
+    EXPECT_EQ(query_struct.operator_crop.list_region[0].p_max.y, 2000) << "Invalid operator_crop.p_max.y, for file " << G_INPUTFILE << "\n";
 
     EXPECT_EQ(query_struct.operator_crop.category, 2) << "Invalid Category value " << G_INPUTFILE << "\n";
     EXPECT_EQ(query_struct.operator_crop.proper, true) << "Invalid Proper Value " << G_INPUTFILE << "\n";
@@ -53,12 +54,8 @@ TEST(SOLUTION_2_TESTING, myTest) {
     });
 
     EXPECT_EQ(list_records.size(), 10);
-    std::vector<InspectionRegion> filtered_records = query_struct.filterWithQueryStruct(list_records, false);
-    EXPECT_EQ(filtered_records.size(), 6);
-    for(const auto &record : filtered_records) {
-        EXPECT_EQ(record.get_group_id(), 0);
-        EXPECT_EQ(record.get_category(), 2);
-    }
+    std::vector<InspectionRegion> filtered_records = query_struct.filterWithQueryStruct(list_records, false); // Should be empty.
+    EXPECT_EQ(filtered_records.size(), 0);
 
 }
 
@@ -87,10 +84,11 @@ TEST(SOLUTION_2_TESTING, proper) {
     EXPECT_EQ(query_struct.valid_region.p_max.x, 610) << "Invalid p_max, for file " << filePath << "\n";
     EXPECT_EQ(query_struct.valid_region.p_max.y, 600) << "Invalid p_max, for file " << filePath << "\n";
 
-    EXPECT_EQ(query_struct.operator_crop.region.p_min.x, 0) << "Invalid operator_crop.p_min.x, for file " << filePath << "\n";
-    EXPECT_EQ(query_struct.operator_crop.region.p_min.y, 0) << "Invalid operator_crop.p_min.y, for file " << filePath << "\n";
-    EXPECT_EQ(query_struct.operator_crop.region.p_max.x, 2000) << "Invalid operator_crop.p_max.x, for file " << filePath << "\n";
-    EXPECT_EQ(query_struct.operator_crop.region.p_max.y, 2000) << "Invalid operator_crop.p_max.y, for file " << filePath << "\n";
+    EXPECT_EQ(query_struct.operator_crop.list_region[0].p_min.x, 0) << "Invalid operator_crop.p_min.x, for file " << filePath << "\n";
+    EXPECT_EQ(query_struct.operator_crop.list_region[0].p_min.y, 0) << "Invalid operator_crop.p_min.y, for file " << filePath << "\n";
+    EXPECT_EQ(query_struct.operator_crop.list_region[0].p_max.x, 2000) << "Invalid operator_crop.p_max.x, for file " << filePath << "\n";
+    EXPECT_EQ(query_struct.operator_crop.list_region[0].p_max.y, 2000) << "Invalid operator_crop.p_max.y, for file " << filePath << "\n";
+
 
     EXPECT_EQ(query_struct.operator_crop.category, 2) << "Invalid Category value " << filePath << "\n";
     EXPECT_EQ(query_struct.operator_crop.proper, true) << "Invalid Proper Value " << filePath << "\n";

@@ -18,7 +18,7 @@ std::unique_ptr<LeafNode> OrOperator::executeOR(std::unique_ptr<LeafNode> accumu
     CropQueryParameters crop_query;
 
     ///////////// REQUIRED ///////////////
-    crop_query.region = Region::unionRegions(leafA->getCropParams().region, leafB->getCropParams().region);
+    crop_query.list_region = Region::unionRegions(leafA->getCropParams().list_region, leafB->getCropParams().list_region);
     ///////////////////////////////////////
     ///
     /// 3 optionals.

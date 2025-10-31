@@ -35,9 +35,17 @@ struct Region {
     bool contains(const InspectionRegion &myGroup) const;
 
     // AND operand basically.
-    static Region intersectRegions(const Region &a, const Region &b);
+    static std::vector<Region> intersectRegions(const std::vector<Region> &a, const std::vector<Region> &b);
+
     // Make it as big as possible. Unfortunatley if their are gaps it will include the gaps as well. THis pretty much OR operarnd.
     static Region unionRegions(const Region& a, const Region& b);
+
+
+    static bool overlapsOrTouches(const Region& a, const Region& b);
+
+
+
+    static std::vector<Region> unionRegions(const std::vector<Region> &a, const std::vector<Region> &b);
 
 };
 
@@ -47,7 +55,7 @@ struct Region {
  */
 struct CropQueryParameters {
     //Req
-    Region region;
+    std::vector<Region> list_region;
 
     std::optional<std::int64_t> category;
 

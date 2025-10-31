@@ -12,7 +12,11 @@
  * @return true if it passes conditions
  */
 bool InspectionGroupFilter::passesCroppedFilter(const InspectionRegion &my_group, const QueryFileStructure &query_struct) {
-    return query_struct.operator_crop.region.contains(my_group);
+
+    return std::any_of(query_struct.operator_crop.list_region.begin(),
+                       query_struct.operator_crop.list_region.end(),
+                       [&](const auto& region){ return region.contains(my_group); });
+
 }
 
 bool InspectionGroupFilter::passesCategoryFilter(const InspectionRegion &my_group, const QueryFileStructure &query_struct) {

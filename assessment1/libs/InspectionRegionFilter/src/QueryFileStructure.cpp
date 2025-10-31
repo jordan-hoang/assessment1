@@ -17,26 +17,42 @@ bool Region::contains(const InspectionRegion &myGroup) const {
 }
 
 // And 2 regions.
-Region Region::intersectRegions(const Region &a, const Region &b) {
-    Region result;
-    // You need to take the more strict value so for minimum values take the bigger one.
-    result.p_min.x = std::max(a.p_min.x, b.p_min.x);
-    result.p_min.y = std::max(a.p_min.y, b.p_min.y);
+std::vector<Region> Region::intersectRegions(const std::vector<Region> &a, const std::vector<Region> &b) {
 
-    // And for maxes take the minimum.
-    result.p_max.x = std::min(a.p_max.x, b.p_max.x);
-    result.p_max.y = std::min(a.p_max.y, b.p_max.y);
+    // You need to take the more strict value so for minimum values take the bigger one.
+    std::vector<Region> result;
+    for (const auto &ra : a) {
+        for (const auto &rb : b) {
+            Region inter;
+            inter.p_min.x = std::max(ra.p_min.x, rb.p_min.x);
+            inter.p_min.y = std::max(ra.p_min.y, rb.p_min.y);
+            inter.p_max.x = std::min(ra.p_max.x, rb.p_max.x);
+            inter.p_max.y = std::min(ra.p_max.y, rb.p_max.y);
+
+            // Only add if intersection is valid
+            if (inter.p_min.x < inter.p_max.x && inter.p_min.y < inter.p_max.y)
+                result.push_back(inter);
+        }
+    }
 
     return result;
 }
 // Make it as big as possible. Unfortunatley if their are gaps it will include the gaps as well.
-Region Region::unionRegions(const Region& a, const Region& b) {
-    Region result;
-    result.p_min.x = std::min(a.p_min.x, b.p_min.x);
-    result.p_min.y = std::min(a.p_min.y, b.p_min.y);
-    result.p_max.x = std::max(a.p_max.x, b.p_max.x);
-    result.p_max.y = std::max(a.p_max.y, b.p_max.y);
+std::vector<Region> Region::unionRegions(const std::vector<Region>& a, const std::vector<Region>& b) {
+    // You know if they overlap you can simply merge them for better performance, but for now don't do that
+    // instead write tests first. than do that.
+    std::vector<Region> result;
+    result.reserve(a.size() + b.size());
+    result.insert(result.end(), a.begin(), a.end());
+    result.insert(result.end(), b.begin(), b.end());
     return result;
+}
+
+
+/// Can be used to merge.
+bool Region::overlapsOrTouches(const Region& a, const Region& b) {
+    return !(a.p_max.x < b.p_min.x || b.p_max.x < a.p_min.x ||
+             a.p_max.y < b.p_min.y || b.p_max.y < a.p_min.y);
 }
 
 
@@ -84,8 +100,10 @@ void QueryFileStructure::dumpQueryStruct(const QueryFileStructure &query) {
     std::cout << "Valid_Region Min x,y: " << p_min.x << ", " << p_min.y
               << " | Max x,y: " << p_max.x << ", " << p_max.y << '\n';
 
-    std::cout << "Valid_Region_operator_crop Min x,y: " << query.operator_crop.region.p_min.x << ", " << query.operator_crop.region.p_min.y  << std::endl;
-    std::cout << "Valid_Region_operator_crop Max x,y: " << query.operator_crop.region.p_max.x << ", " << query.operator_crop.region.p_max.y << std::endl;
+
+    for (const auto &r : query.operator_crop.list_region) {
+        std::cout << "Min(" << r.p_min.x << "," << r.p_min.y << ") Max(" << r.p_max.x << "," << r.p_max.y << ")\n";
+    }
 
     CropQueryParameters::dumpCropQueryParameters(query.operator_crop);
 }

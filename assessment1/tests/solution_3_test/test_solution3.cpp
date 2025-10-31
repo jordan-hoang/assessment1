@@ -35,11 +35,11 @@ TEST(SOLUTION_3_TESTING, TEST_AND) {
     EXPECT_EQ(query_struct.valid_region.p_max.x, 1000) << "Invalid p_max, for file " << filePath << "\n";
     EXPECT_EQ(query_struct.valid_region.p_max.y, 1000) << "Invalid p_max, for file " << filePath << "\n";
 
-    EXPECT_EQ(query_struct.operator_crop.region.p_min.x, 0) << "Invalid operator_crop.p_min.x, for file " << filePath << "\n";
-    EXPECT_EQ(query_struct.operator_crop.region.p_min.y, 0) << "Invalid operator_crop.p_min.y, for file " << filePath << "\n";
+    EXPECT_EQ(query_struct.operator_crop.list_region[0].p_min.x, 0) << "Invalid operator_crop.p_min.x, for file " << filePath << "\n";
+    EXPECT_EQ(query_struct.operator_crop.list_region[0].p_min.y, 0) << "Invalid operator_crop.p_min.y, for file " << filePath << "\n";
 
-    EXPECT_EQ(query_struct.operator_crop.region.p_max.x, 600) << "Invalid operator_crop.p_max.x, for file " << filePath << "\n";
-    EXPECT_EQ(query_struct.operator_crop.region.p_max.y, 1000) << "Invalid operator_crop.p_max.y, for file " << filePath << "\n";
+    EXPECT_EQ(query_struct.operator_crop.list_region[0].p_max.x, 600) << "Invalid operator_crop.p_max.x, for file " << filePath << "\n";
+    EXPECT_EQ(query_struct.operator_crop.list_region[0].p_max.y, 1000) << "Invalid operator_crop.p_max.y, for file " << filePath << "\n";
 
     EXPECT_EQ(query_struct.operator_crop.category, 2) << "Invalid Category value " << filePath << "\n";
     EXPECT_EQ(query_struct.operator_crop.proper, false) << "Invalid Proper Value " << filePath << "\n";

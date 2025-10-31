@@ -18,7 +18,10 @@ std::unique_ptr<LeafNode> AndOperator::executeAND(std::unique_ptr<LeafNode> accu
     // We need to combine these leafNodes by creating a new one.
     CropQueryParameters crop_query;
     ///////////// REQUIRED ///////////////
-    crop_query.region = Region::intersectRegions(leafA->getCropParams().region, leafB->getCropParams().region);
+    crop_query.list_region = Region::intersectRegions(leafA->getCropParams().list_region, leafB->getCropParams().list_region);
+
+
+
     ///////////////////////////////////////
     ///
     /// 3 optionals.

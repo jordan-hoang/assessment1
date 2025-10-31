@@ -18,11 +18,16 @@ LeafNode::LeafNode(const nlohmann::json &crop_json_data) {
     const auto& p_min_json = region_json.at("p_min");
     const auto& p_max_json = region_json.at("p_max");
 
-    cropParams.region.p_min.x = p_min_json.at("x").get<double>();
-    cropParams.region.p_min.y = p_min_json.at("y").get<double>();
+    // If we are creating a node... then only 1 allowed.
 
-    cropParams.region.p_max.x = p_max_json.at("x").get<double>();
-    cropParams.region.p_max.y = p_max_json.at("y").get<double>();
+    Region my_region;
+    my_region.p_min.x = p_min_json.at("x").get<double>();
+    my_region.p_min.y = p_min_json.at("y").get<double>();
+
+    my_region.p_max.x = p_max_json.at("x").get<double>();
+    my_region.p_max.y = p_max_json.at("y").get<double>();
+
+    cropParams.list_region.push_back(my_region);
 
 
     auto oc_json = crop_json_data.at("operator_crop");
