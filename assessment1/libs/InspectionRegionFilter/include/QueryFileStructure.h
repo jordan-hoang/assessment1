@@ -65,7 +65,7 @@ struct CropQueryParameters {
 // The top level struct. T
 struct QueryFileStructure {
     // REQUIRED: The global region used for checking group integrity (Proper Point logic).
-    Region valid_region;
+    std::vector<Region> valid_region;
     // REQUIRED: The parameters for the specific 'operator_crop' query.
     CropQueryParameters operator_crop;
 

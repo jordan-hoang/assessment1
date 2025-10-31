@@ -37,8 +37,12 @@ bool InspectionGroupFilter::passesProperFilter(const InspectionRegion &my_group,
         if (!proper_opt.value()) {
             return true;
         }
-        if(query.valid_region.contains(my_group)) { // Satsifies region.
-            return true;
+
+        // Some value is within the region.
+        for(const auto& region : query.valid_region) {
+            if(region.contains(my_group)) { // Satsifies region.
+                return true;
+            }
         }
 
         failed_region_group_ids.insert(my_group.get_group_id());
