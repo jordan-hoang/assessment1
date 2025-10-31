@@ -12,7 +12,7 @@
  * @param crop_json_data The JSON Data
  */
 LeafNode::LeafNode(const nlohmann::json &crop_json_data) {
-    //std::cout << crop_json_data << std::endl; // FOR DEBUG
+    // std::cout << crop_json_data << std::endl; // FOR DEBUG
 
     const auto& region_json = crop_json_data.at("operator_crop").at("region");
     const auto& p_min_json = region_json.at("p_min");
@@ -25,8 +25,6 @@ LeafNode::LeafNode(const nlohmann::json &crop_json_data) {
     cropParams.region.p_max.y = p_max_json.at("y").get<double>();
 
 
-    // --- OPTIONAL FIELD EXTRACTION --- Duplicated from solution 2 basically, can probably extract to a function, but no time.
-    //
     auto oc_json = crop_json_data.at("operator_crop");
 
     if (oc_json.contains("category")) {
@@ -50,6 +48,7 @@ LeafNode::LeafNode(const nlohmann::json &crop_json_data) {
         }
     }
 
+    //CropQueryParameters::dumpCropQueryParameters(cropParams);
 }
 
 

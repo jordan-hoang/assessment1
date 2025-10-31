@@ -11,20 +11,6 @@
 static std::string G_INPUTFILE;  // file-scope static, only visible here
 
 
-// void testParseArguments(const std::vector<std::string>& args) {
-//     std::vector<char*> argv;
-//     for (auto& s : args) {
-//         argv.push_back(const_cast<char*>(s.c_str()));
-//     }
-//     int argc = static_cast<int>(argv.size());
-//
-//     solution2_core::parseArguments(argc, argv.data());
-//
-//
-//     std::cout << "argv[0] " << argv[0] << std::endl;
-// }
-
-
 TEST(SOLUTION_2_TESTING, myTest) {
     ASSERT_FALSE(G_INPUTFILE.empty()) << "File path not set! Did you pass it from CMake?";
 
@@ -40,7 +26,6 @@ TEST(SOLUTION_2_TESTING, myTest) {
          parsed_json = ResultFileIO::readJsonFile(G_INPUTFILE);
     });
 
-    //QueryFileStructure query_struct = solution2_core::extractQueryData(parsed_json); // Extract the json into that class we created to filter against.
     QueryFileStructure query_struct = QueryFileJsonParser::from_json(parsed_json);
 
     //QueryFileStructure::dumpQueryStruct(query_struct);
@@ -68,7 +53,7 @@ TEST(SOLUTION_2_TESTING, myTest) {
     });
 
     EXPECT_EQ(list_records.size(), 10);
-    std::vector<InspectionRegion> filtered_records = solution2_core::filterWithQueryStruct(query_struct, list_records, false);
+    std::vector<InspectionRegion> filtered_records = query_struct.filterWithQueryStruct(list_records, false);
     EXPECT_EQ(filtered_records.size(), 6);
     for(const auto &record : filtered_records) {
         EXPECT_EQ(record.get_group_id(), 0);

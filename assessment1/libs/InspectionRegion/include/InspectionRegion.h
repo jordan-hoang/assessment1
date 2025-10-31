@@ -33,10 +33,9 @@ public:
 
     // Read from database.
     static InspectionRegion map_row_to_record(const pqxx::row& row);
-
-
     static std::vector<InspectionRegion> readRecordsFromDB(const std::string& conn_string);
 
+    static std::string toString(const std::vector<InspectionRegion>& inspection_regions);
 
     ~InspectionRegion() = default;
 };

@@ -24,6 +24,11 @@ std::unique_ptr<LeafNode> AndOperator::executeAND(std::unique_ptr<LeafNode> accu
     /// 3 optionals.
     auto catA = leafA->getCropParams().category;
     auto catB = leafB->getCropParams().category;
+    //
+    // std::cout << " DUMPING AND \n" <<"";
+    // CropQueryParameters::dumpCropQueryParameters(leafA->getCropParams());
+    // std::cout <<"\n\n";
+    //
     if (catA.has_value() && catB.has_value() && catA.value() == catB.value()) {
         crop_query.category = catA; // both have value and match
     } else {
@@ -58,7 +63,7 @@ std::unique_ptr<LeafNode> AndOperator::evaluate() const {
     }
 
     std::cout << "Evaluating AND with " << children_.size() << " children" << std::endl;
-    auto accumulator = children_[0]->evaluate(); // We reduce like compiler class.
+    auto accumulator = children_[0]->evaluate(); // We reduce like compiler class... this results in some values being lost?
     for(unsigned int i = 1; i < children_.size(); i++) {
         accumulator = executeAND(std::move(accumulator), children_[i]->evaluate());
     }

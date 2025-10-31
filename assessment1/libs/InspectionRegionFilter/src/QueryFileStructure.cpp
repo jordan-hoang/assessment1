@@ -1,5 +1,7 @@
 
 #include "QueryFileStructure.h"
+
+#include <InspectionGroupFilter.h>
 #include <iostream>
 
 // Checks if a given point is inside the region.
@@ -82,4 +84,28 @@ void QueryFileStructure::dumpQueryStruct(const QueryFileStructure &query) {
     std::cout << "Valid_Region_operator_crop Max x,y: " << query.operator_crop.region.p_max.x << ", " << query.operator_crop.region.p_max.y << std::endl;
 
     CropQueryParameters::dumpCropQueryParameters(query.operator_crop);
+}
+
+
+std::vector<InspectionRegion> QueryFileStructure::filterWithQueryStruct(const std::vector<InspectionRegion> &list_records, bool debug) const {
+
+    if(debug) { /* For debugging */
+        dumpQueryStruct(*this); // For debugging can remove later... not needed
+        std::cout << std::endl;
+        std::cout << std::endl;
+        for(InspectionRegion a : list_records) {
+            std::cout << a.toString() << std::endl;
+        }
+    }
+
+    std::vector<InspectionRegion> filtered_records = InspectionGroupFilter::applyFilter(*this, list_records);
+
+    if(debug) {  // More debugging dumps
+        std::cout << "\nDumping out filtered records" << std::endl;
+        for(InspectionRegion a : filtered_records) {
+            std::cout << a.toString() << std::endl;
+        }
+    }
+    return filtered_records;
+
 }

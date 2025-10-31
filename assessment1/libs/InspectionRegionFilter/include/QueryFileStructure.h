@@ -74,6 +74,16 @@ struct QueryFileStructure {
      * @param query
      */
     static void dumpQueryStruct(const QueryFileStructure &query);
+
+
+    /**
+    *
+    * @param query_struct - The query struct you are going to filter list_records by.
+    * @param list_records - List of records.
+    * @return A filtered list of list_records.
+    */
+    std::vector<InspectionRegion> filterWithQueryStruct(const std::vector<InspectionRegion> &list_records, bool debug = false) const;
+
 };
 
 
