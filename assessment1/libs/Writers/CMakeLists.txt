@@ -3,8 +3,8 @@ project(ResultWriter)
 set(CMAKE_CXX_STANDARD 17)
 
 add_library(ResultWriter STATIC
-        ResultWriter.h
-        ResultWriter.cpp
+        ResultFileIO.h
+        ResultFileIO.cpp
 )
 
 # Anything links to this will get header.
@@ -14,6 +14,8 @@ target_include_directories(ResultWriter PUBLIC
 
 # Keep implementation private.
 target_link_libraries(ResultWriter
+        PUBLIC
+            ExternalHeaders
         PRIVATE
             InspectionRegion
 )

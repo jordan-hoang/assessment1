@@ -11,7 +11,7 @@
 
 #include "InspectionGroupFilter.h"
 #include "QueryFileStructure.h"
-#include "ResultWriter.h"
+#include "ResultFileIO.h"
 #include "LeafNode.h"
 #include "QueryBuilder.h"
 
@@ -79,7 +79,7 @@ void executeQuery(const std::string &path_to_json) {
         "dbname=postgres ";      /// Generic default database.
 
     json parsed_json = readJsonFile(path_to_json);
-    QueryFileStructure query_struct = QueryFileStructureParser::from_json(parsed_json); // Extract the json into that class we created to filter against.
+    QueryFileStructure query_struct = QueryFileJsonParser::from_json(parsed_json); // Extract the json into that class we created to filter against.
     std::cout << std::endl;
     //QueryFileStructure::dumpQueryStruct(query_struct);  UNCOMMENT THIS FOR DUMP GOOD FOR TEST
     std::vector<InspectionRegion> list_records = InspectionRegion::readRecordsFromDB(conn_string); // Fetch all the database results.

@@ -8,6 +8,6 @@
 
 
 
-namespace QueryFileStructureParser {
+namespace QueryFileJsonParser {
     QueryFileStructure from_json(const nlohmann::json& j);
 };

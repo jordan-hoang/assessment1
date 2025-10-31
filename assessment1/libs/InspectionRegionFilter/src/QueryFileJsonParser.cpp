@@ -7,7 +7,9 @@
 #include <QueryBuilder.h>
 
 
-QueryFileStructure QueryFileStructureParser::from_json(const nlohmann::json& my_json) {
+// bug with solution 2. it's cause it assumes we have minimum 2 nodes and above.
+// add check for "null node"??? or maybe the for loop shoold handle it.
+QueryFileStructure QueryFileJsonParser::from_json(const nlohmann::json& my_json) {
     // Check if the input object is valid before attempting extraction
     if (my_json.is_null() || my_json.empty()) {
         throw std::runtime_error("Input JSON object is null or empty. Cannot extract data.");
