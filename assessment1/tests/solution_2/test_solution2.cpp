@@ -3,6 +3,7 @@
 //
 
 
+#include <QueryFileJsonParser.h>
 #include <solution2_core.h>
 #include <gtest/gtest.h>
 #include "ResultFileIO.h"
@@ -27,9 +28,6 @@ static std::string G_INPUTFILE;  // file-scope static, only visible here
 TEST(SOLUTION_2_TESTING, myTest) {
     ASSERT_FALSE(G_INPUTFILE.empty()) << "File path not set! Did you pass it from CMake?";
 
-    std::filesystem::path cwd = std::filesystem::current_path();
-    std::cout << "Current directory: " << cwd << "\n";
-
     std::string conn_string =
         "host=localhost "
         "port=5432 "      // Standard PostgreSQL port
@@ -42,7 +40,8 @@ TEST(SOLUTION_2_TESTING, myTest) {
          parsed_json = ResultFileIO::readJsonFile(G_INPUTFILE);
     });
 
-    QueryFileStructure query_struct = solution2_core::extractQueryData(parsed_json); // Extract the json into that class we created to filter against.
+    //QueryFileStructure query_struct = solution2_core::extractQueryData(parsed_json); // Extract the json into that class we created to filter against.
+    QueryFileStructure query_struct = QueryFileJsonParser::from_json(parsed_json);
 
     //QueryFileStructure::dumpQueryStruct(query_struct);
     EXPECT_EQ(query_struct.valid_region.p_min.x, 0) << "Invalid p_min, for file " << G_INPUTFILE << "\n";

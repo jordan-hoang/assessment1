@@ -7,6 +7,7 @@
 #include <iostream>
 #include <cstdint>
 #include <InspectionGroupFilter.h>
+#include <QueryFileJsonParser.h>
 
 #include "QueryFileStructure.h"
 #include "InspectionRegion.h"
@@ -169,12 +170,11 @@ void solution2_core::executeQuery(const std::string &path_to_json) {
 
     json parsed_json = ResultFileIO::readJsonFile(path_to_json);
 
-    QueryFileStructure query_struct = solution2_core::extractQueryData(parsed_json); // Extract the json into that class we created to filter against.
-    //QueryFileStructure query_struct = QueryFileJsonParser::from_json(parsed_json); // Extract the json into that class we created to filter against.
-    QueryFileStructure::dumpQueryStruct(query_struct);
-    // std::vector<InspectionRegion> list_records = InspectionRegion::readRecordsFromDB(conn_string); // Fetch all the database results.
-    // std::vector<InspectionRegion> filtered_records = filterWithQueryStruct(query_struct, list_records); // Now filter list_records
-    // ResultWriter::writeToTextFile(filtered_records);
+    QueryFileStructure query_struct = QueryFileJsonParser::from_json(parsed_json); // Extract the json into that class we created to filter against.
+    std::vector<InspectionRegion> list_records = InspectionRegion::readRecordsFromDB(conn_string); // Fetch all the database results.
+    std::vector<InspectionRegion> filtered_records = filterWithQueryStruct(query_struct, list_records, false); // Now filter list_records
+    ResultFileIO::writeToTextFile(filtered_records);
+
 }
 
 

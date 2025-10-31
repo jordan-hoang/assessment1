@@ -1,12 +1,4 @@
-#include <iostream>
-
-
-
-#include "QueryFileStructure.h"
-#include "InspectionGroupFilter.h"
 #include "include/solution2_core.h"
-
-
 
 int main(int argc, char* argv[])
 {

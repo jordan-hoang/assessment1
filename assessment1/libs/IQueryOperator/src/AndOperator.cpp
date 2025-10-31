@@ -59,7 +59,7 @@ std::unique_ptr<IQueryOperator> AndOperator::evaluate() const {
     }
 
     std::cout << "Evaluating AND with " << children_.size() << " children" << std::endl;
-    auto accumulator = children_[0]->evaluate(); // We reduce like compioler class.
+    auto accumulator = children_[0]->evaluate(); // We reduce like compiler class.
     for(unsigned int i = 1; i < children_.size(); i++) {
         accumulator = executeAND(std::move(accumulator), children_[i]->evaluate());
     }

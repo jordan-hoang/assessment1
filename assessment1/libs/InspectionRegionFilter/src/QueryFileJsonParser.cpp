@@ -28,15 +28,12 @@ QueryFileStructure QueryFileJsonParser::from_json(const nlohmann::json& my_json)
         // 2.) Extract operator_crop Block
         // FOR THIS WE NEED TO USE THE RECURSIVE Stuff / Abstract Syntax Tree.
         // const json& oc_json = my_json.at("query").at("operator_crop");
-        auto root = QueryBuilder::parse_query_root(my_json.at("query"));
+        auto root = QueryBuilder::parse_query_root(my_json.at("query")); /// In this sitaution we get a single LeafNdoe.
         auto result = root->evaluate();  // executes all the ANDS and OR Operations.
-        // Cast result into leafNode and then assign it to operator crop.
+
         auto leafA = dynamic_cast<LeafNode*>(result.get());
         query_data.operator_crop = leafA->getCropParams();
 
-        // DEBUG prints
-        // std::cout << "Final combined cropQuery" << std::endl;
-        // leafA->getCropParams().dumpCropQueryParameters();
 
     } catch (const nlohmann::json::exception& e) {
         std::string error_msg = "Required Data Extraction Error: Missing or malformed required JSON field. Details: ";
