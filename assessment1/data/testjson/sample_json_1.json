@@ -1,7 +1,7 @@
 {
   "valid_region": {
     "p_min": { "x": 0, "y": 0 },
-    "p_max": { "x": 610, "y": 700 }
+    "p_max": { "x": 610, "y": 600 }
   },
   "query": {
     "operator_crop": {

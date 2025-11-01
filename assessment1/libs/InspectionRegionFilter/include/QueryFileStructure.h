@@ -11,6 +11,8 @@
 #include <set>
 #include <optional>
 #include <cstdint>
+#include <unordered_set>
+
 #include "InspectionRegion.h"
 
 /**
@@ -35,9 +37,17 @@ struct Region {
     bool contains(const InspectionRegion &myGroup) const;
 
     // AND operand basically.
-    static Region intersectRegions(const Region &a, const Region &b);
+    static std::vector<Region> intersectRegions(const std::vector<Region> &a, const std::vector<Region> &b);
+
     // Make it as big as possible. Unfortunatley if their are gaps it will include the gaps as well. THis pretty much OR operarnd.
     static Region unionRegions(const Region& a, const Region& b);
+
+
+    static bool overlapsOrTouches(const Region& a, const Region& b);
+
+
+
+    static std::vector<Region> unionRegions(const std::vector<Region> &a, const std::vector<Region> &b);
 
 };
 
@@ -47,9 +57,9 @@ struct Region {
  */
 struct CropQueryParameters {
     //Req
-    Region region;
+    std::vector<Region> list_region;
 
-    std::optional<std::int64_t> category;
+    std::unordered_set<std::int64_t> list_category;
 
     //Only include points whose group_id is in this list.
     std::optional<std::set<std::int64_t>> one_of_groups;
@@ -74,6 +84,16 @@ struct QueryFileStructure {
      * @param query
      */
     static void dumpQueryStruct(const QueryFileStructure &query);
+
+
+    /**
+    *
+    * @param query_struct - The query struct you are going to filter list_records by.
+    * @param list_records - List of records.
+    * @return A filtered list of list_records.
+    */
+    std::vector<InspectionRegion> filterWithQueryStruct(const std::vector<InspectionRegion> &list_records, bool debug = false) const;
+
 };
 
 

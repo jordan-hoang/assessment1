@@ -18,17 +18,21 @@ std::unique_ptr<LeafNode> AndOperator::executeAND(std::unique_ptr<LeafNode> accu
     // We need to combine these leafNodes by creating a new one.
     CropQueryParameters crop_query;
     ///////////// REQUIRED ///////////////
-    crop_query.region = Region::intersectRegions(leafA->getCropParams().region, leafB->getCropParams().region);
+    crop_query.list_region = Region::intersectRegions(leafA->getCropParams().list_region, leafB->getCropParams().list_region);
+
+
+
     ///////////////////////////////////////
     ///
     /// 3 optionals.
-    auto catA = leafA->getCropParams().category;
-    auto catB = leafB->getCropParams().category;
-    if (catA.has_value() && catB.has_value() && catA.value() == catB.value()) {
-        crop_query.category = catA; // both have value and match
-    } else {
-        crop_query.category.reset(); // invalidate if they don't match or any is empty
+    auto catASet = leafA->getCropParams().list_category;
+    auto catBSet = leafB->getCropParams().list_category;
+    for(const auto &a : catASet) {
+        if(catBSet.find(a) != catBSet.end()) {
+            crop_query.list_category.insert(a);
+        }
     }
+
 
     // Do proper.
     bool properA = leafA->getCropParams().proper.value_or(false);  // If missing value make it false.
@@ -58,7 +62,7 @@ std::unique_ptr<LeafNode> AndOperator::evaluate() const {
     }
 
     std::cout << "Evaluating AND with " << children_.size() << " children" << std::endl;
-    auto accumulator = children_[0]->evaluate(); // We reduce like compiler class.
+    auto accumulator = children_[0]->evaluate(); // We reduce like compiler class... this results in some values being lost?
     for(unsigned int i = 1; i < children_.size(); i++) {
         accumulator = executeAND(std::move(accumulator), children_[i]->evaluate());
     }

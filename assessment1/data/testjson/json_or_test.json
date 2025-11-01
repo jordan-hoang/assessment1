@@ -10,22 +10,22 @@
           "region": {
             "p_min": { "x": 0, "y": 0 },
             "p_max": { "x": 1000, "y": 1000 }
-          }
-        },
-        "category": 2,
-        "one_of_groups": [0, 5],
-        "proper": false
+          },
+          "category": 2,
+          "one_of_groups": [0, 5],
+          "proper": false
+        }
       },
       {
         "operator_crop": {
           "region": {
-            "p_min": { "x": 0, "y": 0 },
-            "p_max": { "x": 10, "y": 10 }
-          }
-        },
-        "category": 2,
-        "one_of_groups": [0, 5, 2,1,2,3,4,5,6,7,8,9,10],
-        "proper": false
+            "p_min": { "x": 1200, "y": 1200 },
+            "p_max": { "x": 2000, "y": 2000 }
+          },
+          "category": 2,
+          "one_of_groups": [0, 5, 2, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+          "proper": false
+        }
       }
     ]
   }

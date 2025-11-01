@@ -8,7 +8,6 @@
 #define FILTERSTRUCT_H
 
 
-#include <vector>
 #include <set>
 #include <optional>
 #include <cstdint>

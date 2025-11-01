@@ -67,3 +67,13 @@ std::vector<InspectionRegion> InspectionRegion::readRecordsFromDB(const std::str
 
     return list_records;
 }
+
+
+
+std::string InspectionRegion::toString(const std::vector<InspectionRegion>& inspection_regions) {
+    std::string output;
+    for(const auto &i : inspection_regions) {
+        output += i.toString() + "\n";
+    }
+    return output;
+}

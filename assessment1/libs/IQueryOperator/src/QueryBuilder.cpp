@@ -16,6 +16,7 @@ std::unique_ptr<IQueryOperator> parseJson(const nlohmann::json& my_json) {
         return std::make_unique<LeafNode>(my_json); // This one isn't recursive it's like the base case!
     }
     if(my_json.contains("operator_and")) {
+        std::cout << "OPERATOR_AND TRIGGERED CREATING...\n";
         auto andOp = std::make_unique<AndOperator>();
         for (const auto& child : my_json["operator_and"]) {
             andOp->add_child(parseJson(child));
@@ -24,6 +25,7 @@ std::unique_ptr<IQueryOperator> parseJson(const nlohmann::json& my_json) {
     }
 
     if(my_json.contains("operator_or")) {
+        std::cout << "OPERATOR_OR TRIGGERED CREATING...\n";
         auto orOP = std::make_unique<OrOperator>();
         for (const auto& child : my_json["operator_or"]) {
             orOP->add_child(parseJson(child));

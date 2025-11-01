@@ -12,13 +12,21 @@
  * @return true if it passes conditions
  */
 bool InspectionGroupFilter::passesCroppedFilter(const InspectionRegion &my_group, const QueryFileStructure &query_struct) {
-    return query_struct.operator_crop.region.contains(my_group);
+
+    return std::any_of(query_struct.operator_crop.list_region.begin(),
+                       query_struct.operator_crop.list_region.end(),
+                       [&](const auto& region){ return region.contains(my_group); });
+
 }
 
 bool InspectionGroupFilter::passesCategoryFilter(const InspectionRegion &my_group, const QueryFileStructure &query_struct) {
     // If it doesn't have a value or it matches the query struct than we are "good"
-    return !query_struct.operator_crop.category.has_value() ||
-        my_group.get_category() == query_struct.operator_crop.category.value();
+    for(auto &i : query_struct.operator_crop.list_category) {
+        if(my_group.get_category() == i) {
+            return true;
+        }
+    }
+    return false;
 }
 
 bool InspectionGroupFilter::passesOneOfSetFilter(const InspectionRegion &my_group, const QueryFileStructure &query_struct) {
@@ -37,6 +45,8 @@ bool InspectionGroupFilter::passesProperFilter(const InspectionRegion &my_group,
         if (!proper_opt.value()) {
             return true;
         }
+
+        // Some value is within the region.
         if(query.valid_region.contains(my_group)) { // Satsifies region.
             return true;
         }
