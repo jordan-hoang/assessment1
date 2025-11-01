@@ -4,6 +4,7 @@
 
 #ifndef LEAFNODE_H
 #define LEAFNODE_H
+#include <ThrowWithContext.hpp>
 #include <nlohmann_json/json.hpp>
 #include "IQueryOperator.h"
 #include "QueryFileStructure.h"
@@ -26,7 +27,7 @@ class LeafNode : public IQueryOperator {
 
         // DUMMY CONSTRUCTOR TO MAKE COMPILER HAPPY DO NOT USE / DELETE LATER NOT NECESSARY.
         explicit LeafNode() {
-            throw std::logic_error("Dummy LeafNode constructor called — shouldn’t happen!");
+            ThrowWithContext::throw_with_context("Dummy LeafNode constructor called — shouldn’t happen!", __FILE__, __LINE__);
         };
 
         std::unique_ptr<LeafNode> evaluate() const override;

@@ -5,13 +5,13 @@
 #include "QueryFileJsonParser.h"
 #include <LeafNode.h>
 #include <QueryBuilder.h>
-
+#include <ThrowWithContext.hpp>
 
 
 QueryFileStructure QueryFileJsonParser::from_json(const nlohmann::json& my_json) {
     // Check if the input object is valid before attempting extraction
     if (my_json.is_null() || my_json.empty()) {
-        throw std::runtime_error("Input JSON object is null or empty. Cannot extract data.");
+        ThrowWithContext::throw_with_context("Input JSON object is null or empty. Cannot extract data.", __FILE__, __LINE__);
     }
 
     QueryFileStructure query_data;

@@ -14,6 +14,8 @@ target_include_directories(solution1
 
 # Link Boost libraries using Boost_LIBRARIES to avoid imported target issues
 target_link_libraries(solution1
+        PUBLIC
+            UtilityFunctions
         PRIVATE
             ${Boost_LIBRARIES}
             libpqxx::pqxx

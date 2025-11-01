@@ -88,7 +88,6 @@ TEST(SOLUTION_3_TESTING, TEST_OR) {
     //QueryFileStructure query_struct = solution2_core::extractQueryData(parsed_json); // Extract the json into that class we created to filter against.
     QueryFileStructure query_struct = QueryFileJsonParser::from_json(parsed_json);
 
-    //QueryFileStructure::dumpQueryStruct(query_struct);
 
     EXPECT_EQ(query_struct.valid_region.p_min.x, 0) << "Invalid p_min, for file " << filePath << "\n";
     EXPECT_EQ(query_struct.valid_region.p_min.y, 0) << "Invalid p_min, for file " << filePath << "\n";

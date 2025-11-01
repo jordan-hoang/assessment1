@@ -4,6 +4,7 @@
 #include "OrOperator.h"  // For "operator_or"
 #include <iostream>
 #include <stdexcept>
+#include <ThrowWithContext.hpp>
 
 /**
  * Combines everything
@@ -33,8 +34,8 @@ std::unique_ptr<IQueryOperator> parseJson(const nlohmann::json& my_json) {
         return orOP;
     }
 
-    throw std::runtime_error("Unknown operator type in JSON");
-
+    ThrowWithContext::throw_with_context("Unknown operator type in JSON", __FILE__, __LINE__);
+    return nullptr;
 }
 
 /**

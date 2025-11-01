@@ -6,6 +6,7 @@
 #include <boost/program_options.hpp>
 
 #include "InspectionRegion.h"
+#include "../libs/Util/ThrowWithContext.hpp"
 
 
 namespace po = boost::program_options;
@@ -89,9 +90,7 @@ long long get_next_available_id(pqxx::connection& C, const std::string& table_na
             return max_id + 1;
         }
     } catch (const pqxx::sql_error& e) {
-        // Handle case where table might not exist yet (though we assume it does).
-        std::cerr << "SQL Error finding max ID for " << table_name << ": " << e.what() << std::endl;
-        throw;
+        ThrowWithContext::throw_with_context(e.what()  , __FILE__, __LINE__);
     }
 
 }
