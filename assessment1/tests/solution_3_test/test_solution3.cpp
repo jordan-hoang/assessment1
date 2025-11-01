@@ -89,12 +89,73 @@ TEST(SOLUTION_3_TESTING, TEST_OR) {
     //QueryFileStructure query_struct = solution2_core::extractQueryData(parsed_json); // Extract the json into that class we created to filter against.
     QueryFileStructure query_struct = QueryFileJsonParser::from_json(parsed_json);
 
-    QueryFileStructure::dumpQueryStruct(query_struct);
+    //QueryFileStructure::dumpQueryStruct(query_struct);
 
-    // EXPECT_EQ(query_struct.valid_region.p_min.x, 0) << "Invalid p_min, for file " << filePath << "\n";
-    // EXPECT_EQ(query_struct.valid_region.p_min.y, 0) << "Invalid p_min, for file " << filePath << "\n";
-    // EXPECT_EQ(query_struct.valid_region.p_max.x, 1000) << "Invalid p_max, for file " << filePath << "\n";
-    // EXPECT_EQ(query_struct.valid_region.p_max.y, 1000) << "Invalid p_max, for file " << filePath << "\n";
+    EXPECT_EQ(query_struct.valid_region.p_min.x, 0) << "Invalid p_min, for file " << filePath << "\n";
+    EXPECT_EQ(query_struct.valid_region.p_min.y, 0) << "Invalid p_min, for file " << filePath << "\n";
+    EXPECT_EQ(query_struct.valid_region.p_max.x, 1000) << "Invalid p_max, for file " << filePath << "\n";
+    EXPECT_EQ(query_struct.valid_region.p_max.y, 1000) << "Invalid p_max, for file " << filePath << "\n";
+
+    EXPECT_EQ(query_struct.operator_crop.list_region[0].p_min.x, 0) << "Invalid operator_crop.p_min.x, for file " << filePath << "\n";
+    EXPECT_EQ(query_struct.operator_crop.list_region[0].p_min.y, 0) << "Invalid operator_crop.p_min.y, for file " << filePath << "\n";
+
+    EXPECT_EQ(query_struct.operator_crop.list_region[0].p_max.x, 1000) << "Invalid operator_crop.p_max.x, for file " << filePath << "\n";
+    EXPECT_EQ(query_struct.operator_crop.list_region[0].p_max.y, 1000) << "Invalid operator_crop.p_max.y, for file " << filePath << "\n";
+
+
+    auto search = query_struct.operator_crop.list_category.find(2);
+    if(search != query_struct.operator_crop.list_category.end()) {
+        EXPECT_EQ(*search, 2) << "Invalid Category value " << filePath << "\n";
+    }
+
+    EXPECT_EQ(query_struct.operator_crop.proper, false) << "Invalid Proper Value " << filePath << "\n";
+
+    std::set<int64_t> expected = {0,1,2,3,4,5,6,7,8,9,10};
+    EXPECT_EQ(query_struct.operator_crop.one_of_groups, expected) << "Invalid Proper Value " << filePath << "\n";
+
+    std::vector<InspectionRegion> list_records;
+    EXPECT_NO_THROW({
+        list_records = InspectionRegion::readRecordsFromDB(conn_string); // Fetch all the database results.
+    });
+
+    EXPECT_EQ(list_records.size(), 10) << "Invalid dBSize for " << filePath << "\n";
+    std::vector<InspectionRegion> filtered_records = query_struct.filterWithQueryStruct(list_records);
+    EXPECT_EQ(filtered_records.size(), 6);
+    for(const auto &record : filtered_records) {
+        EXPECT_EQ(record.get_group_id(), 0);
+        EXPECT_EQ(record.get_category(), 2);
+        EXPECT_LE(record.get_x_coordinate(), 610);
+        EXPECT_LE(record.get_y_coordinate(), 603);
+    }
+
+
+}
+
+
+TEST(SOLUTION_3_TESTING, TEST_OR_DEEP) {
+
+    std::string filePath =  "../../../data/testjson/sol3/deep_or.json";
+    std::string conn_string =
+        "host=localhost "
+        "port=5432 "      // Standard PostgreSQL port
+        "user=postgres "
+        "password=Moonshine4me " /// REPLACE WITH YOUR PASSWORD!!!
+        "dbname=postgres ";      /// Generic default database.
+
+    nlohmann::json parsed_json;
+    EXPECT_NO_THROW({
+         parsed_json = ResultFileIO::readJsonFile(filePath);
+    });
+
+    //QueryFileStructure query_struct = solution2_core::extractQueryData(parsed_json); // Extract the json into that class we created to filter against.
+    QueryFileStructure query_struct = QueryFileJsonParser::from_json(parsed_json);
+
+    EXPECT_EQ(query_struct.valid_region.p_min.x, 0) << "Invalid p_min, for file " << filePath << "\n";
+    EXPECT_EQ(query_struct.valid_region.p_min.y, 0) << "Invalid p_min, for file " << filePath << "\n";
+    EXPECT_EQ(query_struct.valid_region.p_max.x, 3100) << "Invalid p_max, for file " << filePath << "\n";
+    EXPECT_EQ(query_struct.valid_region.p_max.y, 3100) << "Invalid p_max, for file " << filePath << "\n";
+
+
     //
     // EXPECT_EQ(query_struct.operator_crop.region.p_min.x, 0) << "Invalid operator_crop.p_min.x, for file " << filePath << "\n";
     // EXPECT_EQ(query_struct.operator_crop.region.p_min.y, 0) << "Invalid operator_crop.p_min.y, for file " << filePath << "\n";
@@ -102,30 +163,70 @@ TEST(SOLUTION_3_TESTING, TEST_OR) {
     // EXPECT_EQ(query_struct.operator_crop.region.p_max.x, 600) << "Invalid operator_crop.p_max.x, for file " << filePath << "\n";
     // EXPECT_EQ(query_struct.operator_crop.region.p_max.y, 1000) << "Invalid operator_crop.p_max.y, for file " << filePath << "\n";
 
-    // EXPECT_EQ(query_struct.operator_crop.category, 2) << "Invalid Category value " << filePath << "\n";
-    // EXPECT_EQ(query_struct.operator_crop.proper, false) << "Invalid Proper Value " << filePath << "\n";
+    EXPECT_GT(query_struct.operator_crop.list_category.count(2), 0) << "Category 2 not found!";
+    EXPECT_GT(query_struct.operator_crop.list_category.count(1), 0) << "Category 1 not found!";
+    EXPECT_GT(query_struct.operator_crop.list_category.count(4), 0) << "Category 1 not found!";
+
+
+
+    EXPECT_EQ(query_struct.operator_crop.proper, false) << "Invalid Proper Value " << filePath << "\n";
+
+
+
+    std::set<int64_t> expected = {0,5,2,100};
+    EXPECT_EQ(query_struct.operator_crop.one_of_groups, expected) << " Compare Set" << filePath << "\n";
     //
-    std::set<int64_t> expected = {0,1,2,3,4,5,6,7,8,9,10};
-    EXPECT_EQ(query_struct.operator_crop.one_of_groups, expected) << "Invalid Proper Value " << filePath << "\n";
+    std::vector<InspectionRegion> list_records;
+    EXPECT_NO_THROW({
+        list_records = InspectionRegion::readRecordsFromDB(conn_string); // Fetch all the database results.
+    });
+
+    EXPECT_EQ(list_records.size(), 10) << "Invalid dBSize for " << filePath << "\n";
+
+    std::vector<InspectionRegion> filtered_records = query_struct.filterWithQueryStruct(list_records);
+
     //
-    // std::vector<InspectionRegion> list_records;
-    // EXPECT_NO_THROW({
-    //     list_records = InspectionRegion::readRecordsFromDB(conn_string); // Fetch all the database results.
-    // });
-    //
-    // EXPECT_EQ(list_records.size(), 10) << "Invalid dBSize for " << filePath << "\n";
-    // std::vector<InspectionRegion> filtered_records = query_struct.filterWithQueryStruct(list_records);
-    // EXPECT_EQ(filtered_records.size(), 5);
-    // for(const auto &record : filtered_records) {
-    //     EXPECT_EQ(record.get_group_id(), 0);
-    //     EXPECT_EQ(record.get_category(), 2);
-    //     EXPECT_LE(record.get_x_coordinate(), 600);
-    //     EXPECT_LE(record.get_y_coordinate(), 1000);
-    // }
-    //
+    // std::cout << "=============================\n";
+    // std::cout << InspectionRegion::toString(filtered_records) << std::endl;
+
+    EXPECT_EQ(filtered_records.size(), 7);
+    for(const auto &record : filtered_records) {
+        EXPECT_TRUE(record.get_group_id() == 0 || record.get_group_id() == 5 || record.get_group_id() == 2 || record.get_group_id() == 100);
+        EXPECT_TRUE(record.get_category() == 1 || record.get_category() == 2 || record.get_category() == 4);
+    }
+
+    query_struct.operator_crop.one_of_groups->insert(1);
+    filtered_records = query_struct.filterWithQueryStruct(list_records);
+    EXPECT_EQ(filtered_records.size(), 8);
+
+    query_struct.operator_crop.proper = true; /// Forcefully set to true for this next test.
+    query_struct.valid_region.p_min.x = 0;
+    query_struct.valid_region.p_min.y = 0;
+    query_struct.valid_region.p_max.x = 800;
+    query_struct.valid_region.p_max.y = 800;
+    //// This shoud remove group 1  from the region when proper = true.
+    filtered_records = query_struct.filterWithQueryStruct(list_records);
+
+
+    EXPECT_EQ(filtered_records.size(), 7);
+
+    query_struct.valid_region.p_min.x = 200; // This should invalidate 1 coordinate in the group of 0 should everything should be removed no group 0s allowed.
+    query_struct.valid_region.p_min.y = 0;
+    query_struct.valid_region.p_max.x = 1060;
+    query_struct.valid_region.p_max.y = 1000;
+
+    filtered_records = query_struct.filterWithQueryStruct(list_records);
+
+
+    // The value that gets cropped out isn't tested in the valid region is this a bug?
+    // I wonder if there is priority to filters?
+    EXPECT_EQ(filtered_records.size(), 1);
+    for(auto &i : filtered_records) {
+     EXPECT_EQ(i.get_group_id(), 1);
+    }
+
 
 }
-
 
 
 // Optional: demonstrate passing a command-line argument
