@@ -33,8 +33,22 @@ LeafNode::LeafNode(const nlohmann::json &crop_json_data) {
     auto oc_json = crop_json_data.at("operator_crop");
 
     if (oc_json.contains("category")) {
-        cropParams.list_category.insert(oc_json.at("category").get<std::int64_t>());
+        const auto& cat = oc_json.at("category");
+
+        if(cat.is_number_integer()){
+            cropParams.list_category.insert(oc_json.at("category").get<std::int64_t>());
+        } else if(cat.is_array()) {
+            for (const auto& elem : cat) {
+                if (!elem.is_number_integer()) {
+                    throw std::runtime_error("Invalid type inside category array — must be numbers");
+                }
+                cropParams.list_category.insert(elem.get<std::int64_t>());
+            }
+        }
+    } else {
+        throw std::runtime_error("Invalid 'category' type — must be integer or array of integers");
     }
+
 
     if(oc_json.contains("proper")) {
         cropParams.proper.emplace(oc_json.at("proper").get<bool>());

@@ -26,7 +26,6 @@ TEST(SOLUTION_3_TESTING, TEST_AND) {
          parsed_json = ResultFileIO::readJsonFile(filePath);
     });
 
-    //QueryFileStructure query_struct = solution2_core::extractQueryData(parsed_json); // Extract the json into that class we created to filter against.
     QueryFileStructure query_struct = QueryFileJsonParser::from_json(parsed_json);
 
 
@@ -131,7 +130,6 @@ TEST(SOLUTION_3_TESTING, TEST_OR) {
 
 }
 
-
 TEST(SOLUTION_3_TESTING, TEST_OR_DEEP) {
 
     std::string filePath =  "../../../data/testjson/sol3/deep_or.json";
@@ -227,6 +225,60 @@ TEST(SOLUTION_3_TESTING, TEST_OR_DEEP) {
 
 
 }
+
+
+
+TEST(SOLUTION_3_TESTING, TEST_NESTED_OR_AND_OUTER) {
+
+    std::string filePath =  "../../../data/testjson/sol3/outer_and_nested_or.json";
+    std::string conn_string =
+        "host=localhost "
+        "port=5432 "      // Standard PostgreSQL port
+        "user=postgres "
+        "password=Moonshine4me " /// REPLACE WITH YOUR PASSWORD!!!
+        "dbname=postgres ";      /// Generic default database.
+
+    nlohmann::json parsed_json;
+    EXPECT_NO_THROW({
+         parsed_json = ResultFileIO::readJsonFile(filePath);
+    });
+
+    QueryFileStructure query_struct = QueryFileJsonParser::from_json(parsed_json);
+
+    EXPECT_EQ(query_struct.valid_region.p_min.x, 0) << "Invalid p_min, for file " << filePath << "\n";
+    EXPECT_EQ(query_struct.valid_region.p_min.y, 0) << "Invalid p_min, for file " << filePath << "\n";
+    EXPECT_EQ(query_struct.valid_region.p_max.x, 3100) << "Invalid p_max, for file " << filePath << "\n";
+    EXPECT_EQ(query_struct.valid_region.p_max.y, 3100) << "Invalid p_max, for file " << filePath << "\n";
+
+    EXPECT_EQ(query_struct.operator_crop.list_region.size(), 2);
+
+
+
+    EXPECT_GT(query_struct.operator_crop.list_category.count(2), 0) << "Category 2 not found!";
+    EXPECT_EQ(query_struct.operator_crop.proper, false) << "Invalid Proper Value " << filePath << "\n";
+
+
+    std::set<int64_t> expected_group = {0,5,1,2};
+    EXPECT_EQ(query_struct.operator_crop.one_of_groups, expected_group) << " Compare Set" << filePath << "\n";
+
+
+    std::vector<InspectionRegion> list_records;
+    EXPECT_NO_THROW({ list_records = InspectionRegion::readRecordsFromDB(conn_string); });
+    EXPECT_EQ(list_records.size(), 10) << "Invalid dBSize for " << filePath << "\n";
+
+
+
+    std::vector<InspectionRegion> filtered_records = query_struct.filterWithQueryStruct(list_records);
+
+    EXPECT_EQ(filtered_records.size(), 8);
+    for (const auto& r : filtered_records) {
+        ASSERT_LT(r.get_x_coordinate(), 1053);
+        ASSERT_TRUE(r.get_category() == 2 || r.get_category() == 0 || r.get_category() == 3);
+    }
+
+
+}
+
 
 
 // Optional: demonstrate passing a command-line argument
