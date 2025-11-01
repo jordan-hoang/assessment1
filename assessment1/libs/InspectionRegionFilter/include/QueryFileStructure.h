@@ -11,6 +11,8 @@
 #include <set>
 #include <optional>
 #include <cstdint>
+#include <unordered_set>
+
 #include "InspectionRegion.h"
 
 /**
@@ -57,7 +59,7 @@ struct CropQueryParameters {
     //Req
     std::vector<Region> list_region;
 
-    std::optional<std::int64_t> category;
+    std::unordered_set<std::int64_t> list_category;
 
     //Only include points whose group_id is in this list.
     std::optional<std::set<std::int64_t>> one_of_groups;

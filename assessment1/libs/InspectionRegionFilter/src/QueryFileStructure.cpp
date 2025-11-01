@@ -58,10 +58,13 @@ bool Region::overlapsOrTouches(const Region& a, const Region& b) {
 
 void CropQueryParameters::dumpCropQueryParameters(const CropQueryParameters &query) {
 
-    if(query.category.has_value()) {
-        std::cout << "Category: " << query.category.value() << std::endl;
+    if (!query.list_category.empty()) {
+        std::cout << "Categories: ";
+        for (auto c : query.list_category)
+            std::cout << c << " ";
+        std::cout << std::endl;
     } else {
-        std::cout << "Category has no value (optional)" << std::endl;
+        std::cout << "No categories" << std::endl;
     }
 
     if(query.one_of_groups.has_value()) {

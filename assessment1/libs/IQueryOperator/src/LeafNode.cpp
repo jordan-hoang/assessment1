@@ -33,7 +33,7 @@ LeafNode::LeafNode(const nlohmann::json &crop_json_data) {
     auto oc_json = crop_json_data.at("operator_crop");
 
     if (oc_json.contains("category")) {
-        cropParams.category.emplace(oc_json.at("category").get<std::int64_t>());
+        cropParams.list_category.insert(oc_json.at("category").get<std::int64_t>());
     }
 
     if(oc_json.contains("proper")) {

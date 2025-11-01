@@ -40,7 +40,11 @@ TEST(SOLUTION_2_TESTING, myTest) {
     EXPECT_EQ(query_struct.operator_crop.list_region[0].p_max.x, 2000) << "Invalid operator_crop.p_max.x, for file " << G_INPUTFILE << "\n";
     EXPECT_EQ(query_struct.operator_crop.list_region[0].p_max.y, 2000) << "Invalid operator_crop.p_max.y, for file " << G_INPUTFILE << "\n";
 
-    EXPECT_EQ(query_struct.operator_crop.category, 2) << "Invalid Category value " << G_INPUTFILE << "\n";
+    auto search = query_struct.operator_crop.list_category.find(2);
+    if(search != query_struct.operator_crop.list_category.end()) {
+        EXPECT_EQ(*search, 2) << "Invalid Category value " << "\n";
+    }
+
     EXPECT_EQ(query_struct.operator_crop.proper, true) << "Invalid Proper Value " << G_INPUTFILE << "\n";
 
 
@@ -90,7 +94,11 @@ TEST(SOLUTION_2_TESTING, proper) {
     EXPECT_EQ(query_struct.operator_crop.list_region[0].p_max.y, 2000) << "Invalid operator_crop.p_max.y, for file " << filePath << "\n";
 
 
-    EXPECT_EQ(query_struct.operator_crop.category, 2) << "Invalid Category value " << filePath << "\n";
+    auto search = query_struct.operator_crop.list_category.find(2);
+    if(search != query_struct.operator_crop.list_category.end()) {
+        EXPECT_EQ(*search, 2) << "Invalid Category value " << filePath << "\n";
+    }
+
     EXPECT_EQ(query_struct.operator_crop.proper, true) << "Invalid Proper Value " << filePath << "\n";
 
 

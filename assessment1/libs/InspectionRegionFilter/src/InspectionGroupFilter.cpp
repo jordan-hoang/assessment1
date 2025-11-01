@@ -21,8 +21,12 @@ bool InspectionGroupFilter::passesCroppedFilter(const InspectionRegion &my_group
 
 bool InspectionGroupFilter::passesCategoryFilter(const InspectionRegion &my_group, const QueryFileStructure &query_struct) {
     // If it doesn't have a value or it matches the query struct than we are "good"
-    return !query_struct.operator_crop.category.has_value() ||
-        my_group.get_category() == query_struct.operator_crop.category.value();
+    for(auto &i : query_struct.operator_crop.list_category) {
+        if(my_group.get_category() == i) {
+            return true;
+        }
+    }
+    return false;
 }
 
 bool InspectionGroupFilter::passesOneOfSetFilter(const InspectionRegion &my_group, const QueryFileStructure &query_struct) {

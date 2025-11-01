@@ -24,15 +24,12 @@ std::unique_ptr<LeafNode> OrOperator::executeOR(std::unique_ptr<LeafNode> accumu
     /// 3 optionals.
 
     // --- CATEGORY: take any present value we can't put them in a list unfortunatley. ---
-    auto catA = leafA->getCropParams().category;
-    auto catB = leafB->getCropParams().category;
-    if (catA.has_value()) {
-        crop_query.category = catA;
-    } else if (catB.has_value()) {
-        crop_query.category = catB;
-    } else {
-        crop_query.category.reset();
-    }
+    auto catA = leafA->getCropParams().list_category;
+    auto catB = leafB->getCropParams().list_category;
+
+    crop_query.list_category.clear();
+    crop_query.list_category.insert(catA.begin(), catA.end());
+    crop_query.list_category.insert(catB.begin(),catB.end());
 
     // Do proper.
     bool properA = leafA->getCropParams().proper.value_or(false);  // If missing value make it false.

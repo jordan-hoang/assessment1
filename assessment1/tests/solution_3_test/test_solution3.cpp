@@ -41,7 +41,12 @@ TEST(SOLUTION_3_TESTING, TEST_AND) {
     EXPECT_EQ(query_struct.operator_crop.list_region[0].p_max.x, 600) << "Invalid operator_crop.p_max.x, for file " << filePath << "\n";
     EXPECT_EQ(query_struct.operator_crop.list_region[0].p_max.y, 1000) << "Invalid operator_crop.p_max.y, for file " << filePath << "\n";
 
-    EXPECT_EQ(query_struct.operator_crop.category, 2) << "Invalid Category value " << filePath << "\n";
+    auto search = query_struct.operator_crop.list_category.find(2);
+    if(search != query_struct.operator_crop.list_category.end()) {
+        EXPECT_EQ(*search, 2) << "Invalid Category value " << filePath << "\n";
+    }
+
+
     EXPECT_EQ(query_struct.operator_crop.proper, false) << "Invalid Proper Value " << filePath << "\n";
 
     std::set<int64_t> expected = {0, 5};

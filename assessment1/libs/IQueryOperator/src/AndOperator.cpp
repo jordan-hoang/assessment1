@@ -25,18 +25,14 @@ std::unique_ptr<LeafNode> AndOperator::executeAND(std::unique_ptr<LeafNode> accu
     ///////////////////////////////////////
     ///
     /// 3 optionals.
-    auto catA = leafA->getCropParams().category;
-    auto catB = leafB->getCropParams().category;
-    //
-    // std::cout << " DUMPING AND \n" <<"";
-    // CropQueryParameters::dumpCropQueryParameters(leafA->getCropParams());
-    // std::cout <<"\n\n";
-    //
-    if (catA.has_value() && catB.has_value() && catA.value() == catB.value()) {
-        crop_query.category = catA; // both have value and match
-    } else {
-        crop_query.category.reset(); // invalidate if they don't match or any is empty
+    auto catASet = leafA->getCropParams().list_category;
+    auto catBSet = leafB->getCropParams().list_category;
+    for(const auto &a : catASet) {
+        if(catBSet.find(a) != catBSet.end()) {
+            crop_query.list_category.insert(a);
+        }
     }
+
 
     // Do proper.
     bool properA = leafA->getCropParams().proper.value_or(false);  // If missing value make it false.
