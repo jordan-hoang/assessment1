@@ -3,6 +3,9 @@
 //
 
 #include "InspectionGroupFilter.h"
+
+#include <iostream>
+
 #include "QueryFileStructure.h"
 
 /**
@@ -67,8 +70,8 @@ std::vector<InspectionRegion> InspectionGroupFilter::applyFilter
     (const QueryFileStructure &query_struct, const std::vector<InspectionRegion> &inspection_groups) {
 
     std::vector<InspectionRegion> result;
-
     std::unordered_set<int64_t> failed_region_group_ids;
+
     for(const auto &inspection_group : inspection_groups) {
         if (passesCroppedFilter(inspection_group, query_struct) &&
             passesCategoryFilter(inspection_group, query_struct) &&
@@ -80,11 +83,15 @@ std::vector<InspectionRegion> InspectionGroupFilter::applyFilter
             }
     } // Nice and compact, but tricky to use with debugger.
 
+
+
     auto new_end = std::remove_if(result.begin(), result.end(),
         [&failed_region_group_ids](const InspectionRegion &group) {
             return failed_region_group_ids.count(group.get_group_id());
         });
+
     result.erase(new_end, result.end()); // Can also use erase_if but that's C++20.
+
 
     return result;
 }

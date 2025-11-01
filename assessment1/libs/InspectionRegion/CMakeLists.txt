@@ -10,4 +10,5 @@ target_include_directories(InspectionRegion PUBLIC
 find_package(libpqxx CONFIG REQUIRED)
 target_link_libraries(InspectionRegion PUBLIC
         libpqxx::pqxx
+        UtilityFunctions
 )

@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <utility>
+#include "ThrowWithContext.hpp"
 
 /**
  * Basically parses the JSON and turns it into a CropQueryParameters object.
@@ -33,8 +34,22 @@ LeafNode::LeafNode(const nlohmann::json &crop_json_data) {
     auto oc_json = crop_json_data.at("operator_crop");
 
     if (oc_json.contains("category")) {
-        cropParams.list_category.insert(oc_json.at("category").get<std::int64_t>());
+        const auto& cat = oc_json.at("category");
+
+        if(cat.is_number_integer()){
+            cropParams.list_category.insert(oc_json.at("category").get<std::int64_t>());
+        } else if(cat.is_array()) {
+            for (const auto& elem : cat) {
+                if (!elem.is_number_integer()) {
+                    ThrowWithContext::throw_with_context("Invalid type inside category array — must be numbers", __FILE__, __LINE__);
+                }
+                cropParams.list_category.insert(elem.get<std::int64_t>());
+            }
+        }
+    } else {
+        ThrowWithContext::throw_with_context("Invalid 'category' type — must be integer or array of integers", __FILE__, __LINE__);
     }
+
 
     if(oc_json.contains("proper")) {
         cropParams.proper.emplace(oc_json.at("proper").get<bool>());

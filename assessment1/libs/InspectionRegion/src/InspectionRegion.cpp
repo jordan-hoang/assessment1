@@ -7,6 +7,8 @@
 #include <iostream>
 #include <string>
 
+#include "../../Util/ThrowWithContext.hpp"
+
 
 // Maybe not necessary we could've done a struct and not use getters/setters.
 void InspectionRegion::set_coordinate(double x, double y) {
@@ -61,8 +63,7 @@ std::vector<InspectionRegion> InspectionRegion::readRecordsFromDB(const std::str
             list_records.push_back(InspectionRegion::map_row_to_record(row));
         }
     } catch (std::exception& e) {
-        std::cerr << "Unknown error reading inspection_region" << std::endl;\
-        throw;
+        ThrowWithContext::throw_with_context(e.what(),__FILE__, __LINE__ );
     }
 
     return list_records;

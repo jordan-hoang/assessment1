@@ -1,10 +1,5 @@
 ### This is for solution 3 only, decided to make a fresh folder and just keep solution 2.
 
-cmake_minimum_required(VERSION 3.29)
-
-project(IQueryOperator)
-set(CMAKE_CXX_STANDARD 17)
-
 add_library(IQueryOperator
         src/LeafNode.cpp
         src/QueryBuilder.cpp
@@ -18,6 +13,8 @@ target_include_directories(IQueryOperator
 )
 
 target_link_libraries(IQueryOperator
+        PUBLIC
+            UtilityFunctions
         PRIVATE
             InspectionRegion
             InspectionGroupFilter
