@@ -6,7 +6,7 @@
 #include <boost/program_options.hpp>
 
 #include "InspectionRegion.h"
-#include "../libs/Util/ThrowWithContext.hpp"
+#include "ThrowWithContext.hpp"
 
 
 namespace po = boost::program_options;
