@@ -18,7 +18,7 @@ add_subdirectory(libs/InspectionRegion)
 add_subdirectory(libs/InspectionRegionFilter)
 add_subdirectory(libs/IQueryOperator)
 add_subdirectory(libs/Writers)
-add_subdirectory(libs/Util)
+add_subdirectory(libs/Utility)
 
 # External headers (header-only)
 add_library(ExternalHeaders INTERFACE)

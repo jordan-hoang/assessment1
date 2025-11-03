@@ -7,7 +7,7 @@
 #include <iostream>
 #include <string>
 #include <pqxx/pqxx>
-#include "../../Util/ThrowWithContext.hpp"
+#include "ThrowWithContext.hpp"
 
 
 // Maybe not necessary we could've done a struct and not use getters/setters.
