@@ -5,15 +5,14 @@
 #include "include/solution2_core.h"
 #include <nlohmann_json/json.hpp>
 #include <iostream>
-#include <cstdint>
-#include <InspectionGroupFilter.h>
 #include <QueryFileJsonParser.h>
-
 #include "QueryFileStructure.h"
 #include "InspectionRegion.h"
 #include "ResultFileIO.h"
+#include <boost/program_options.hpp>
 
-
+namespace po = boost::program_options;
+using json = nlohmann::json;
 
 int solution2_core::parseArguments(int argc, char *argv[]) {
     po::options_description desc("Allowed options");

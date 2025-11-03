@@ -4,6 +4,7 @@
 
 #include "InspectionGroupFilter.h"
 
+#include <algorithm>
 #include <iostream>
 
 #include "QueryFileStructure.h"

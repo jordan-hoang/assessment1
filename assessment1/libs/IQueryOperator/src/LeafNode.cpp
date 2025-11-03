@@ -76,6 +76,11 @@ LeafNode::LeafNode(CropQueryParameters p) {
     this->cropParams = std::move(p);
 }
 
+LeafNode::LeafNode() {
+    ThrowWithContext::throw_with_context("Dummy LeafNode constructor called — shouldn’t happen!", __FILE__, __LINE__);
+}
+
+
 // Careful this destroys the original "node"
 std::unique_ptr<LeafNode> LeafNode::evaluate() const {
     return std::make_unique<LeafNode>(this->cropParams);

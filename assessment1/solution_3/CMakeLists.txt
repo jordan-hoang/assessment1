@@ -1,7 +1,3 @@
-cmake_minimum_required(VERSION 3.29)
-project(solution3)
-set(CMAKE_CXX_STANDARD 17)
-
 find_package(Boost COMPONENTS program_options)
 find_package(libpqxx CONFIG REQUIRED)
 

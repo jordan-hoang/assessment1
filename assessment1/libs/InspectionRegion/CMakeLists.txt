@@ -8,7 +8,9 @@ target_include_directories(InspectionRegion PUBLIC
 
 
 find_package(libpqxx CONFIG REQUIRED)
-target_link_libraries(InspectionRegion PUBLIC
-        libpqxx::pqxx
-        UtilityFunctions
+
+target_link_libraries(InspectionRegion
+        PRIVATE
+            UtilityFunctions
+            libpqxx::pqxx
 )

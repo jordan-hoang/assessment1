@@ -7,21 +7,15 @@
 
 
 #include <QueryFileStructure.h>
-#include <boost/program_options.hpp>
-#include <nlohmann_json/json.hpp>
 
-using json = nlohmann::json;
-namespace po = boost::program_options;
 
 namespace solution2_core {
 
     // Basically the main loop of solution_2 we do this so we can test the functions easier.
+    // Honestly not necessary anymore since alot of the functoins were moved to libs.
     int parseArguments(int argc, char* argv[]);
 
-
-
     void executeQuery(const std::string &path_to_json);
-
 
 };
 

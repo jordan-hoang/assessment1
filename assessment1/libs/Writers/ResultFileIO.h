@@ -5,7 +5,6 @@
 #ifndef RESULTWRITER_H
 #define RESULTWRITER_H
 
-#include <iostream>
 #include <vector>
 #include <string>
 #include "InspectionRegion.h"

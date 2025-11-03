@@ -1,7 +1,4 @@
 # Result writer, its just a contains a bunch of utiilty functions
-project(ResultWriter)
-set(CMAKE_CXX_STANDARD 17)
-
 add_library(ResultWriter STATIC
         ResultFileIO.h
         ResultFileIO.cpp

@@ -6,7 +6,7 @@
 
 #include <iostream>
 #include <string>
-
+#include <pqxx/pqxx>
 #include "../../Util/ThrowWithContext.hpp"
 
 
