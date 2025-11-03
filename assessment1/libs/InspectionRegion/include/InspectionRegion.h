@@ -5,7 +5,11 @@
 #ifndef RECORD_H
 #define RECORD_H
 #include <string>
-#include <pqxx/pqxx>
+#include <vector>
+
+namespace pqxx {
+    class row;
+}
 
 // Basic container class that handles data, from InspectionRegion database
 class InspectionRegion {

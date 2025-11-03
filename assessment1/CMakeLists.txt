@@ -1,11 +1,12 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.29)
 project(AssessmentSolutions)
+set(CMAKE_CXX_STANDARD 17)
+
 
 # This is for vcpkg, good to know
 #if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
 #    set(CMAKE_TOOLCHAIN_FILE "C:/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
 #endif()
-
 
 # You can set shared compiler flags or options here
 set(CMAKE_CXX_STANDARD 17)

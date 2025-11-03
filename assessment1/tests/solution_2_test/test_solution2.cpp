@@ -10,6 +10,7 @@
 
 static std::string G_INPUTFILE;  // file-scope static, only visible here
 
+using json = nlohmann::json;
 
 TEST(SOLUTION_2_TESTING, myTest) {
     ASSERT_FALSE(G_INPUTFILE.empty()) << "File path not set! Did you pass it from CMake?";

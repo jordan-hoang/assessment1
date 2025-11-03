@@ -13,11 +13,10 @@ target_include_directories(IQueryOperator
 )
 
 target_link_libraries(IQueryOperator
-        PUBLIC
-            UtilityFunctions
         PRIVATE
             InspectionRegion
             InspectionGroupFilter
             ExternalHeaders
+            UtilityFunctions
 )
 
