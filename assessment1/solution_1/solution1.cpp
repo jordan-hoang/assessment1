@@ -131,12 +131,7 @@ int createDB(const std::string& connection_string) {
 // Writes to the database using lib.
 int writeToDB(const std::vector<InspectionRegion>& records) {
     /// Write to db here.
-    std::string connection_string =
-            "host=localhost "
-            "port=5432 "      // Standard PostgreSQL port
-            "user=postgres "
-            "password=Moonshine4me " /// REPLACE WITH YOUR PASSWORD!!!
-            "dbname=postgres ";      /// Generic default database.
+    std::string connection_string = InspectionRegion::defaultConnectionString();
 
     if(createDB(connection_string)) {
         std::cerr << "Creating database failed. Check connection string, and path of schema.pgsql. If you manually created and don't wanna deal with path issues you can just comment this out." << std::endl;

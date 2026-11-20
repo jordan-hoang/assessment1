@@ -5,6 +5,7 @@
 
 #include "InspectionRegion.h"
 
+#include <cstdlib>
 #include <pqxx/pqxx>
 #include "ThrowWithContext.hpp"
 
@@ -44,4 +45,16 @@ std::vector<InspectionRegion> InspectionRegion::readRecordsFromDB(const std::str
     }
 
     return list_records;
+}
+
+
+/**
+ * Keeps credentials out of the source. Set ASSESSMENT_DB_CONN to override the whole
+ * connection string, or set PGPASSWORD (or use a pgpass file) and libpq supplies it.
+ */
+std::string InspectionRegion::defaultConnectionString() {
+    if (const char* conn = std::getenv("ASSESSMENT_DB_CONN"); conn && *conn) {
+        return conn;
+    }
+    return "host=localhost port=5432 user=postgres dbname=postgres";
 }

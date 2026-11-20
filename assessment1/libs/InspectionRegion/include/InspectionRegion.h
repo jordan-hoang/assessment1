@@ -46,6 +46,11 @@ public:
     // Read from database. Only built when libpqxx was found at configure time.
     static InspectionRegion map_row_to_record(const pqxx::row& row);
     static std::vector<InspectionRegion> readRecordsFromDB(const std::string& conn_string);
+
+    // Connection string with no password in it. Returns $ASSESSMENT_DB_CONN if set,
+    // otherwise "host=localhost port=5432 user=postgres dbname=postgres". libpq then
+    // takes the password from $PGPASSWORD or the pgpass file, never from source code.
+    static std::string defaultConnectionString();
 #endif
 
     static std::string toString(const std::vector<InspectionRegion>& inspection_regions);

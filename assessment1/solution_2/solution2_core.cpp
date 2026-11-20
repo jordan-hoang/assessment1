@@ -61,12 +61,7 @@ static std::vector<InspectionRegion> loadRecords(const std::string &data_dir) {
         return InspectionRegion::readRecordsFromDataDir(data_dir);
     }
 #ifdef ASSESSMENT_HAS_DB
-    std::string conn_string =
-        "host=localhost "
-        "port=5432 "      // Standard PostgreSQL port
-        "user=postgres "
-        "password=Moonshine4me " /// REPLACE WITH YOUR PASSWORD!!!
-        "dbname=postgres ";      /// Generic default database.
+    std::string conn_string = InspectionRegion::defaultConnectionString();
     return InspectionRegion::readRecordsFromDB(conn_string);
 #else
     std::cout << "Built without database support, reading ../../data/0 (use --data to choose another directory)." << std::endl;

@@ -16,12 +16,7 @@ TEST(SOLUTION_2_TESTING, myTest) {
     ASSERT_FALSE(G_INPUTFILE.empty()) << "File path not set! Did you pass it from CMake?";
 
 
-    std::string conn_string =
-        "host=localhost "
-        "port=5432 "      // Standard PostgreSQL port
-        "user=postgres "
-        "password=Moonshine4me " /// REPLACE WITH YOUR PASSWORD!!!
-        "dbname=postgres ";      /// Generic default database.
+    std::string conn_string = InspectionRegion::defaultConnectionString();
 
     json parsed_json;
     EXPECT_NO_THROW({
@@ -70,12 +65,7 @@ TEST(SOLUTION_2_TESTING, proper) {
     ASSERT_FALSE(G_INPUTFILE.empty()) << "File path not set! Did you pass it from CMake?";
     std::string filePath = "../../../data/testjson/sample_json_1.json" ;
 
-    std::string conn_string =
-        "host=localhost "
-        "port=5432 "      // Standard PostgreSQL port
-        "user=postgres "
-        "password=Moonshine4me " /// REPLACE WITH YOUR PASSWORD!!!
-        "dbname=postgres ";      /// Generic default database.
+    std::string conn_string = InspectionRegion::defaultConnectionString();
 
     json parsed_json;
     EXPECT_NO_THROW({
