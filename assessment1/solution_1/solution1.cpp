@@ -1,15 +1,16 @@
 #include <fstream>
 #include <iostream>
 #include <cstdint>
+#include <set>
+#include <sstream>
+#include <vector>
 
 #include <pqxx/pqxx>
-#include <boost/program_options.hpp>
 
 #include "InspectionRegion.h"
 #include "ThrowWithContext.hpp"
+#include "ArgParser.hpp"
 
-
-namespace po = boost::program_options;
 
 /**
  * @param filePath Should go to the parent so it should be <somepath>/assessment1/data/0"
@@ -204,29 +205,25 @@ int writeToDB(const std::vector<InspectionRegion>& records) {
 int runSolution1(int argc, char* argv[])
 {
     // "../../data/0" works quite well.;
-    po::options_description desc("Allowed options");
-    desc.add_options()
-        ("help,h", "Show help message")
-        ("data_directory,p", po::value<std::string>(), "Path to data directory you want to parse")
-    ;
+    ArgParser args("Allowed options");
+    args.flag("help", 'h', "Show help message")
+        .option("data_directory", 'p', "Path to data directory you want to parse");
 
-    po::variables_map vm;
     try {
-        po::store(po::parse_command_line(argc, argv, desc), vm);
-        po::notify(vm);
-    } catch (const po::error& e) {
+        args.parse(argc, argv);
+    } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
         return 1;
     }
 
-    if (vm.count("help")) {
-        std::cout << desc << std::endl;
+    if (args.has("help")) {
+        std::cout << args.help() << std::endl;
         return 1;
     }
 
     // Handle the main parse.
-    if (vm.count("data_directory")) {
-        std::string path = vm["data_directory"].as<std::string>();
+    if (args.has("data_directory")) {
+        std::string path = args.get("data_directory");
         std::cout << "path entered: " << path << std::endl;
         bool isGood = true;
         std::vector<InspectionRegion> myRecord = parseFile(path, isGood);

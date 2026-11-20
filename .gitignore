@@ -1,4 +1,6 @@
 .idea/
 cmake-build-debug
+.vs/
+assessment1/build/
 assessment1/solution_3/output.txt
 assessment1/solution_2/output.txt

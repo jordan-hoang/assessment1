@@ -4,10 +4,10 @@
 
 #include "InspectionRegion.h"
 
-#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <stdexcept>
 #include <string>
-#include <pqxx/pqxx>
-#include "ThrowWithContext.hpp"
 
 
 // Maybe not necessary we could've done a struct and not use getters/setters.
@@ -33,42 +33,42 @@ std::string InspectionRegion::toString() const {
 
 
 /**
-* @param row A pqxx::row object containing the fetched data, and turning it to a record.
-* @return A fully populated Record object.
-*/
-InspectionRegion InspectionRegion::map_row_to_record(const pqxx::row& row) {
-    // Fetch values and convert using the type-safe 'as<T>()' method
-    auto x = row["coord_x"].as<double>();
-    auto y = row["coord_y"].as<double>();
-    auto category_val = row["category"].as<std::int64_t>();
-    auto group_val = row["group_id"].as<std::int64_t>();
-
-    return InspectionRegion(x, y, category_val, group_val);
-}
-
-
-/**
- * @return vector of records from the inspection_region Database table.
+ * @param data_dir Directory holding points.txt, groups.txt and categories.txt, one record per line
+ * (same layout as data/0). This is the database-free way to get records.
  */
-std::vector<InspectionRegion> InspectionRegion::readRecordsFromDB(const std::string& conn_string) {
-
-    std::vector<InspectionRegion> list_records;
-    try
-    {
-        pqxx::connection myconnection(conn_string);
-        pqxx::work W(myconnection);
-
-        pqxx::result inspection_region_result = W.exec("SELECT * From inspection_region;");
-        for (const pqxx::row& row : inspection_region_result) {
-            list_records.push_back(InspectionRegion::map_row_to_record(row));
-        }
-    } catch (std::exception& e) {
-        ThrowWithContext::throw_with_context(e.what(),__FILE__, __LINE__ );
+std::vector<InspectionRegion> InspectionRegion::readRecordsFromDataDir(const std::string& data_dir) {
+    std::string dir = data_dir;
+    if (!dir.empty() && dir.back() != '/' && dir.back() != '\\') {
+        dir += '/';
     }
 
-    return list_records;
-}
+    std::ifstream points(dir + "points.txt");
+    std::ifstream groups(dir + "groups.txt");
+    std::ifstream categories(dir + "categories.txt");
+    if (!points || !groups || !categories) {
+        throw std::runtime_error("Could not open points.txt, groups.txt and categories.txt in: " + data_dir);
+    }
 
+    std::vector<InspectionRegion> records;
+    std::string line_points, line_groups, line_categories;
+    while (std::getline(points, line_points) &&
+           std::getline(groups, line_groups) &&
+           std::getline(categories, line_categories)) {
+        if (line_points.find_first_not_of(" \t\r") == std::string::npos) {
+            continue; // skip blank lines
+        }
+        std::istringstream ss(line_points);
+        double x = 0, y = 0;
+        if (!(ss >> x >> y)) {
+            throw std::runtime_error("Bad line in " + dir + "points.txt: " + line_points);
+        }
+        // groups/categories are stored as floats like 2.000000000000000000e+00
+        auto group_id = static_cast<std::int64_t>(std::stod(line_groups));
+        auto category_id = static_cast<std::int64_t>(std::stod(line_categories));
+        records.emplace_back(x, y, category_id, group_id);
+    }
+    return records;
+}
 
 
 std::string InspectionRegion::toString(const std::vector<InspectionRegion>& inspection_regions) {

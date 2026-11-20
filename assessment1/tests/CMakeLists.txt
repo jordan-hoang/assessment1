@@ -1,14 +1,19 @@
-# Try to find gtest
-find_package(GTest CONFIG)
+# GoogleTest is vendored in libs/external/googletest (v1.15.2), so tests build
+# out of the box after cloning, with no system install required.
+set(GOOGLETEST_DIR ${PROJECT_SOURCE_DIR}/libs/external/googletest)
 
-if(GTest_FOUND)
-    message(STATUS "Found GoogleTest, building tests")
+# Use the same MSVC runtime (/MD) as the rest of the project to avoid link errors on Windows.
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+# Don't install gtest alongside this project, and skip gmock (not used).
+set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
+set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
 
-    # Add subdirectories for each solution's tests
-    add_subdirectory(solution_1_test)
+add_subdirectory(${GOOGLETEST_DIR} ${CMAKE_BINARY_DIR}/googletest EXCLUDE_FROM_ALL)
+
+# Add subdirectories for each solution's tests
+add_subdirectory(solution_1_test)
+if(ASSESSMENT_HAS_DB)
+    # These tests read from a live PostgreSQL database.
     add_subdirectory(solution_2_test)
-    add_subdirectory(solution_3_test)
-
-else()
-    message(WARNING "GoogleTest not found, skipping building tests")
 endif()
+add_subdirectory(solution_3_test)

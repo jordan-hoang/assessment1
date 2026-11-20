@@ -15,7 +15,9 @@ namespace solution2_core {
     // Honestly not necessary anymore since alot of the functoins were moved to libs.
     int parseArguments(int argc, char* argv[]);
 
-    void executeQuery(const std::string &path_to_json);
+    // data_dir: directory with points.txt/groups.txt/categories.txt. Empty means use the
+    // database (or data/0 when built without database support).
+    void executeQuery(const std::string &path_to_json, const std::string &data_dir = "");
 
 };
 

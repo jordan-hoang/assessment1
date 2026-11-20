@@ -9,46 +9,43 @@
 #include "QueryFileStructure.h"
 #include "InspectionRegion.h"
 #include "ResultFileIO.h"
-#include <boost/program_options.hpp>
+#include "ArgParser.hpp"
 
-namespace po = boost::program_options;
 using json = nlohmann::json;
 
 int solution2_core::parseArguments(int argc, char *argv[]) {
-    po::options_description desc("Allowed options");
-    desc.add_options()
-        ("help,h", "Show help message")
-        ("query,q", po::value<std::string>(), "Path to json you want to parse")
-        ("test,t", "Hardcoded path used for fast testing.")
-    ;
+    ArgParser args("Allowed options");
+    args.flag("help", 'h', "Show help message")
+        .option("query", 'q', "Path to json you want to parse")
+        .option("data", 'd', "Data directory with points.txt, groups.txt, categories.txt (instead of the database)")
+        .flag("test", 't', "Hardcoded path used for fast testing.");
 
-    po::variables_map vm;
     try {
-        po::store(po::parse_command_line(argc, argv, desc), vm);
-        po::notify(vm);
-    } catch (const po::error& e) {
+        args.parse(argc, argv);
+    } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
         return 1;
     }
 
-    if (vm.count("help")) {
-        std::cout << desc << std::endl;
+    if (args.has("help")) {
+        std::cout << args.help() << std::endl;
         return 1;
     }
 
-    // Handle the main parse.
-    if (vm.count("query")) {
-        std::string path = vm["query"].as<std::string>();
-        executeQuery(path);
+    std::string data_dir = args.has("data") ? args.get("data") : "";
 
-    } else if (vm.count("test")) {
+    // Handle the main parse.
+    if (args.has("query")) {
+        executeQuery(args.get("query"), data_dir);
+
+    } else if (args.has("test")) {
         std::string hardCodedFileName = "../../data/testjson/sample_json_1.json";
-        executeQuery(hardCodedFileName);
+        executeQuery(hardCodedFileName, data_dir);
     }
 
     else {
         std::string hardCodedFileName = "../../data/testjson/sample_json_1.json";
-        executeQuery(hardCodedFileName);
+        executeQuery(hardCodedFileName, data_dir);
         std::cout << "No arguments entered" << std::endl;
     }
 
@@ -57,23 +54,35 @@ int solution2_core::parseArguments(int argc, char *argv[]) {
 }
 
 
-// Generic method that takes in the main and "executes the main loop" actually maybe not even needed.
-void solution2_core::executeQuery(const std::string &path_to_json) {
-
+// Records come from a data directory when one is given, otherwise from PostgreSQL
+// if the build has database support.
+static std::vector<InspectionRegion> loadRecords(const std::string &data_dir) {
+    if (!data_dir.empty()) {
+        return InspectionRegion::readRecordsFromDataDir(data_dir);
+    }
+#ifdef ASSESSMENT_HAS_DB
     std::string conn_string =
         "host=localhost "
         "port=5432 "      // Standard PostgreSQL port
         "user=postgres "
         "password=Moonshine4me " /// REPLACE WITH YOUR PASSWORD!!!
         "dbname=postgres ";      /// Generic default database.
+    return InspectionRegion::readRecordsFromDB(conn_string);
+#else
+    std::cout << "Built without database support, reading ../../data/0 (use --data to choose another directory)." << std::endl;
+    return InspectionRegion::readRecordsFromDataDir("../../data/0");
+#endif
+}
+
+
+// Generic method that takes in the main and "executes the main loop" actually maybe not even needed.
+void solution2_core::executeQuery(const std::string &path_to_json, const std::string &data_dir) {
 
     json parsed_json = ResultFileIO::readJsonFile(path_to_json);
 
     QueryFileStructure query_struct = QueryFileJsonParser::from_json(parsed_json); // Extract the json into that class we created to filter against.
-    std::vector<InspectionRegion> list_records = InspectionRegion::readRecordsFromDB(conn_string); // Fetch all the database results.
+    std::vector<InspectionRegion> list_records = loadRecords(data_dir); // Fetch all the records.
     std::vector<InspectionRegion> filtered_records = query_struct.filterWithQueryStruct(list_records, false); // Now filter list_records
     ResultFileIO::writeToTextFile(filtered_records);
 
 }
-
-

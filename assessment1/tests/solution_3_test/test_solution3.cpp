@@ -3,23 +3,43 @@
 #include <gtest/gtest.h>
 #include <nlohmann_json/json.hpp>
 #include "ResultFileIO.h"
+#include "QueryBuilder.h"
+#include "LeafNode.h"
 
 static std::string G_INPUTFILE;  // file-scope static, only visible here
+
+// TEST_DATA_DIR is set by CMake to <source>/data, so tests work from any build directory.
+static std::string dataPath(const std::string& relative) {
+    return std::string(TEST_DATA_DIR) + "/" + relative;
+}
+
+// The same 10 records that solution_1 loads into the database from data/0
+// (points.txt, categories.txt, groups.txt). Using these in memory means the
+// tests don't need a running PostgreSQL server.
+static std::vector<InspectionRegion> sampleRecords() {
+    //                       x                     y                    category  group
+    return {
+        InspectionRegion(577.3781372021976495, 602.9674418592738903,  2, 0),
+        InspectionRegion(255.8242855613849542, 518.3250255553513171,  2, 0),
+        InspectionRegion(248.7387376687707388,  36.84160546678144499, 0, 0),
+        InspectionRegion(359.5325046157281577, 560.2826501237561843,  2, 0),
+        InspectionRegion(609.4390133928061459, 455.3212041298544364,  2, 0),
+        InspectionRegion(507.9494424357097273, 530.5806914321019576,  2, 0),
+        InspectionRegion(145.9741939606853975, 568.7765306759491750,  1, 0),
+        InspectionRegion(872.7870916167878477, 794.7750232060996041,  4, 1),
+        InspectionRegion(355.3135512968840999, 533.1347178154384210,  2, 0),
+        InspectionRegion(1052.927827766736300, 948.7348953906021052,  3, 1),
+    };
+}
 
 
 
 TEST(SOLUTION_3_TESTING, TEST_AND) {
 
     // NOTE THIS ASSUMES YOU HAVE DATA from 0 loaded. Perhaps you should write a function to clear tables and load only that.
-    //std::string filePath  = G_INPUTFILE.empty() ? "../../../data/testjson/json_and_test_three.json" : G_INPUTFILE;
+    //std::string filePath  = G_INPUTFILE.empty() ? dataPath("testjson/json_and_test_three.json") : G_INPUTFILE;
 
-    std::string filePath = "../../../data/testjson/json_and_test_three.json" ;
-    std::string conn_string =
-        "host=localhost "
-        "port=5432 "      // Standard PostgreSQL port
-        "user=postgres "
-        "password=Moonshine4me " /// REPLACE WITH YOUR PASSWORD!!!
-        "dbname=postgres ";      /// Generic default database.
+    std::string filePath = dataPath("testjson/json_and_test_three.json") ;
 
     nlohmann::json parsed_json;
     EXPECT_NO_THROW({
@@ -53,7 +73,7 @@ TEST(SOLUTION_3_TESTING, TEST_AND) {
 
     std::vector<InspectionRegion> list_records;
     EXPECT_NO_THROW({
-        list_records = InspectionRegion::readRecordsFromDB(conn_string); // Fetch all the database results.
+        list_records = sampleRecords(); // Fetch all the database results.
     });
 
     EXPECT_EQ(list_records.size(), 10) << "Invalid dBSize for " << filePath << "\n";
@@ -72,13 +92,7 @@ TEST(SOLUTION_3_TESTING, TEST_AND) {
 
 TEST(SOLUTION_3_TESTING, TEST_OR) {
 
-    std::string filePath =  "../../../data/testjson/json_or_test.json";
-    std::string conn_string =
-        "host=localhost "
-        "port=5432 "      // Standard PostgreSQL port
-        "user=postgres "
-        "password=Moonshine4me " /// REPLACE WITH YOUR PASSWORD!!!
-        "dbname=postgres ";      /// Generic default database.
+    std::string filePath =  dataPath("testjson/json_or_test.json");
 
     nlohmann::json parsed_json;
     EXPECT_NO_THROW({
@@ -113,7 +127,7 @@ TEST(SOLUTION_3_TESTING, TEST_OR) {
 
     std::vector<InspectionRegion> list_records;
     EXPECT_NO_THROW({
-        list_records = InspectionRegion::readRecordsFromDB(conn_string); // Fetch all the database results.
+        list_records = sampleRecords(); // Fetch all the database results.
     });
 
     EXPECT_EQ(list_records.size(), 10) << "Invalid dBSize for " << filePath << "\n";
@@ -131,13 +145,7 @@ TEST(SOLUTION_3_TESTING, TEST_OR) {
 
 TEST(SOLUTION_3_TESTING, TEST_OR_DEEP) {
 
-    std::string filePath =  "../../../data/testjson/sol3/deep_or.json";
-    std::string conn_string =
-        "host=localhost "
-        "port=5432 "      // Standard PostgreSQL port
-        "user=postgres "
-        "password=Moonshine4me " /// REPLACE WITH YOUR PASSWORD!!!
-        "dbname=postgres ";      /// Generic default database.
+    std::string filePath =  dataPath("testjson/sol3/deep_or.json");
 
     nlohmann::json parsed_json;
     EXPECT_NO_THROW({
@@ -175,7 +183,7 @@ TEST(SOLUTION_3_TESTING, TEST_OR_DEEP) {
     //
     std::vector<InspectionRegion> list_records;
     EXPECT_NO_THROW({
-        list_records = InspectionRegion::readRecordsFromDB(conn_string); // Fetch all the database results.
+        list_records = sampleRecords(); // Fetch all the database results.
     });
 
     EXPECT_EQ(list_records.size(), 10) << "Invalid dBSize for " << filePath << "\n";
@@ -229,13 +237,7 @@ TEST(SOLUTION_3_TESTING, TEST_OR_DEEP) {
 
 TEST(SOLUTION_3_TESTING, TEST_NESTED_OR_AND_OUTER) {
 
-    std::string filePath =  "../../../data/testjson/sol3/outer_and_nested_or.json";
-    std::string conn_string =
-        "host=localhost "
-        "port=5432 "      // Standard PostgreSQL port
-        "user=postgres "
-        "password=Moonshine4me " /// REPLACE WITH YOUR PASSWORD!!!
-        "dbname=postgres ";      /// Generic default database.
+    std::string filePath =  dataPath("testjson/sol3/outer_and_nested_or.json");
 
     nlohmann::json parsed_json;
     EXPECT_NO_THROW({
@@ -262,7 +264,7 @@ TEST(SOLUTION_3_TESTING, TEST_NESTED_OR_AND_OUTER) {
 
 
     std::vector<InspectionRegion> list_records;
-    EXPECT_NO_THROW({ list_records = InspectionRegion::readRecordsFromDB(conn_string); });
+    EXPECT_NO_THROW({ list_records = sampleRecords(); });
     EXPECT_EQ(list_records.size(), 10) << "Invalid dBSize for " << filePath << "\n";
 
 
@@ -279,6 +281,25 @@ TEST(SOLUTION_3_TESTING, TEST_NESTED_OR_AND_OUTER) {
 }
 
 
+// The database-free loader must produce the same records solution_1 puts in the database.
+TEST(SOLUTION_3_TESTING, READ_RECORDS_FROM_DATA_DIR) {
+    std::vector<InspectionRegion> loaded;
+    ASSERT_NO_THROW({
+        loaded = InspectionRegion::readRecordsFromDataDir(dataPath("0"));
+    });
+
+    std::vector<InspectionRegion> expected = sampleRecords();
+    ASSERT_EQ(loaded.size(), expected.size());
+    for (size_t i = 0; i < expected.size(); ++i) {
+        EXPECT_DOUBLE_EQ(loaded[i].get_x_coordinate(), expected[i].get_x_coordinate()) << "record " << i;
+        EXPECT_DOUBLE_EQ(loaded[i].get_y_coordinate(), expected[i].get_y_coordinate()) << "record " << i;
+        EXPECT_EQ(loaded[i].get_category(), expected[i].get_category()) << "record " << i;
+        EXPECT_EQ(loaded[i].get_group_id(), expected[i].get_group_id()) << "record " << i;
+    }
+
+    EXPECT_THROW(InspectionRegion::readRecordsFromDataDir(dataPath("does_not_exist")), std::runtime_error);
+}
+
 
 // Optional: demonstrate passing a command-line argument
 int main(int argc, char **argv) {
@@ -289,7 +310,7 @@ int main(int argc, char **argv) {
         std::cout << "Running test_solution2 with input file: " << argv[1] << std::endl;
     } else {
         // fallback for manual runs
-        G_INPUTFILE = "../../../data/testjson/json_and_test_three.json";
+        G_INPUTFILE = dataPath("testjson/json_and_test_three.json");
     }
 
     return RUN_ALL_TESTS();
